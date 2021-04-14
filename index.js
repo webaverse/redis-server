@@ -8,7 +8,7 @@ redisConfTxt = redisConfTxt.replace(/# requirepass foobared/, `requirepass ${red
 fs.writeFileSync('./redis.conf', redisConfTxt);
 
 const cp = child_process.spawn('./redis-server', [
-  'redis.conf',
+  './redis.conf',
 ]);
 cp.stdout.setEncoding('utf8');
 cp.stdout.on('data', s => {
