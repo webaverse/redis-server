@@ -21,7 +21,7 @@ cp.stdout.on('data', async s => {
     // console.log('got data', s);
     if (/Ready to accept connections/i.test(s)) {
       console.log('initializing caches');
-      async initCaches();
+      await initCaches();
       console.log('caches initialized');
     }
   } catch (err) {
