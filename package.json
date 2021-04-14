@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/webaverse/redis-server/issues"
   },
-  "homepage": "https://github.com/webaverse/redis-server#readme"
+  "homepage": "https://github.com/webaverse/redis-server#readme",
+  "dependencies": {
+    "forever": "^3.0.4"
+  }
 }
