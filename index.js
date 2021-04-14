@@ -1,6 +1,7 @@
 const fs = require('fs');
 const child_process = require('child_process');
 const {initCaches} = require('./cache.js');
+const {connect} = require('./redis.js');
 const {redisKey} = require('./config.json');
 
 let redisConfTxt = fs.readFileSync('./redis.conf.template', 'utf8');
@@ -15,19 +16,22 @@ cp.on('error', err => {
   process.exit(1);
 });
 cp.stdout.setEncoding('utf8');
-cp.stdout.on('data', s => {
-  console.log('got data', s);
-  if (/Ready to accept connections/i.test(s)) {
-    console.log('initializing caches');
-    initCaches()
-      .then(() => {
-        console.log('caches initialized');
-      }, err => {
-        console.warn('failed to initialize caches', err);
-      });
+cp.stdout.on('data', async s => {
+  try {
+    // console.log('got data', s);
+    if (/Ready to accept connections/i.test(s)) {
+      console.log('initializing caches');
+      async initCaches();
+      console.log('caches initialized');
+    }
+  } catch (err) {
+    console.warn('failed to initialize caches', err);
   }
 });
 cp.on('exit', code => {
   console.warn(`redis exited with code ${code}`);
   process.exit(code);
+});
+process.on('exit', () => {
+  cp.kill();
 });
