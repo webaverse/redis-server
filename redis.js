@@ -7,18 +7,25 @@ const {redisKey} = require('./config.json');
 
 // c = r.createClient(); c.auth('lol', err => {c.hset('cities', 'id', 'A Town Created from Grafting.', err => { c.hget('cities', 'id', console.log); }); c.on('error', console.warn); }); c.ft_create.apply(c, 'idx SCHEMA id TEXT SORTABLE'.split(' ').concat([console.warn])); 1
 
-const redisClient = redis.createClient();
-redisClient.auth(redisKey, err => {
-  if (!err) {
-    redisClient.ft_create.apply(redisClient, 'idx SCHEMA id NUMERIC SORTABLE currentOwnerAddress TEXT currentLocation TEXT description TEXT minterAddress TEXT ownerAddress TEXT properties TEXT'.split(' ').concat([err => {
-      if (err) {
-        console.warn(err);
+let redisClient = null;
+function connect() {
+  return new Promise((accept, reject) => {
+    redisClient = redis.createClient();
+    redisClient.auth(redisKey, err => {
+      if (!err) {
+        redisClient.ft_create.apply(redisClient, 'idx SCHEMA id NUMERIC SORTABLE currentOwnerAddress TEXT currentLocation TEXT description TEXT minterAddress TEXT ownerAddress TEXT properties TEXT'.split(' ').concat([err => {
+          if (!err) {
+            accept();
+          } else {
+            reject(err);
+          }
+        }]));
+      } else {
+        reject(err);
       }
-    }]));
-  } else {
-    console.warn(err);
-  }
-});
+    });
+  });
+}
 
 async function getRedisItem(id, TableName) {
   const p = makePromise();
@@ -95,6 +102,7 @@ const parseRedisItems = result => {
 };
 
 module.exports = {
+  connect,
   redisClient,
   getRedisItem,
   putRedisItem,
