@@ -151,13 +151,13 @@ async function initCaches() {
     console.log('finished init cache', name);
   };
   await Promise.all([
-    'mainnet',
+    // 'mainnet',
     'mainnetsidechain',
-    'polygon',
+    // 'polygon',
   ].map(chainName => {
     return Promise.all([
       _logCache(chainName + ' NFT', initNftCache({chainName})),
-      _logCache(chainName + ' Account', initAccountCache({chainName})),
+      // _logCache(chainName + ' Account', initAccountCache({chainName})),
     ]);
   }));
 }
