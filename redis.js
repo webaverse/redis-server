@@ -56,7 +56,7 @@ async function putRedisItem(id, data, TableName) {
   const p = makePromise();
   args.push(err => {
     if (!err) {
-      console.log('accept');
+      // console.log('accept');
       p.accept();
     } else {
       console.warn('error', err);
