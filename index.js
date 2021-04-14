@@ -1,7 +1,6 @@
 const fs = require('fs');
 const child_process = require('child_process');
 const {initCaches} = require('./cache.js');
-const {connect} = require('./redis.js');
 const {redisKey} = require('./config.json');
 
 let redisConfTxt = fs.readFileSync('./redis.conf.template', 'utf8');
