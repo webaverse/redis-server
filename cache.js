@@ -2,6 +2,7 @@ const {getRedisItem, putRedisItem} = require('./redis.js');
 const {getChainNft, getChainAccount, getAllWithdrawsDeposits} = require('./tokens.js');
 const {ids, tableNames} = require('./constants.js');
 const {getBlockchain, getPastEvents, makeWeb3WebsocketContract} = require('./blockchain.js');
+const {connect} = require('./redis.js');
 
 async function initNftCache({chainName}) {
   const {
@@ -9,6 +10,8 @@ async function initNftCache({chainName}) {
     contracts,
     // wsContracts,
   } = await getBlockchain();
+
+  await connect();
 
   const currentBlockNumber = await web3[chainName].eth.getBlockNumber();
 
