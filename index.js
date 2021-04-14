@@ -28,6 +28,10 @@ cp.stdout.on('data', async s => {
     console.warn('failed to initialize caches', err);
   }
 });
+cp.stderr.setEncoding('utf8');
+cp.stderr.on('data', s => {
+  console.warn(s);
+});
 cp.on('exit', code => {
   console.warn(`redis exited with code ${code}`);
   process.exit(code);
