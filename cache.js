@@ -153,10 +153,7 @@ async function initCaches() {
   await Promise.all([
     'mainnet',
     'mainnetsidechain',
-    // 'testnet',
-    // 'testnetsidechain',
     'polygon',
-    // 'testnetpolygon',
   ].map(chainName => {
     return Promise.all([
       _logCache(chainName + ' NFT', initNftCache({chainName})),
