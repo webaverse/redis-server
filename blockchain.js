@@ -96,7 +96,7 @@ const loadPromise = (async() => {
     )), */
     
     polygon: new Web3(new Web3.providers.HttpProvider(
-      `https://rpc-mainnet.maticvigil.com/v1/${polygonVigilKey}`
+      `https://rpc-webverse-mainnet.maticvigil.com/v1/${polygonVigilKey}`
     )),
     /* testnetpolygon: new Web3(new Web3.providers.HttpProvider(
       `https://rpc-mumbai.maticvigil.com/v1/${polygonVigilKey}`
@@ -112,7 +112,7 @@ const loadPromise = (async() => {
     // testnet: `wss://rinkeby.infura.io/ws/v3/${infuraProjectId}`,
     // testnetsidechain: `${gethNodeWSUrl}:${ports.testnetsidechainWs}`,
     
-    polygon: `wss://rpc-mainnet.maticvigil.com/ws/v1/${polygonVigilKey}`,
+    polygon: `wss://rpc-webaverse-mainnet.maticvigil.com/ws/v1/${polygonVigilKey}`,
     // testnetpolygon: `wss://rpc-mumbai.maticvigil.com/ws/v1/${polygonVigilKey}`,
   };
   
