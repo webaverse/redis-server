@@ -17,6 +17,15 @@ cp.on('error', err => {
 cp.stdout.setEncoding('utf8');
 cp.stdout.on('data', s => {
   console.log('got data', s);
+  if (/Ready to accept connections/i.test(s)) {
+    console.log('initializing caches');
+    initCaches()
+      .then(() => {
+        console.log('caches initialized');
+      }, err => {
+        console.warn('failed to initialize caches', err);
+      });
+  }
 });
 cp.on('exit', code => {
   console.warn(`redis exited with code ${code}`);
