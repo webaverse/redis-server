@@ -16,7 +16,7 @@ async function connect(port, host) {
       redisClient = redis.createClient(port, host);
       redisClient.auth(redisKey, err => {
         if (!err) {
-          const args = `${nftIndexName} PREFIX ${JSON.stringify(tableNames.mainnetsidechainNft)} SCHEMA id NUMERIC SORTABLE currentOwnerAddress TEXT currentLocation TEXT description TEXT minterAddress TEXT ownerAddress TEXT properties TEXT ext TEXT hash TEXT name TEXT unlockable TEXT`.split(' ');
+          const args = `${nftIndexName} PREFIX ${tableNames.mainnetsidechainNft}: SCHEMA id NUMERIC SORTABLE currentOwnerAddress TEXT currentLocation TEXT description TEXT minterAddress TEXT ownerAddress TEXT properties TEXT ext TEXT hash TEXT name TEXT unlockable TEXT`.split(' ');
           console.log('create index 1', args);
           redisClient.ft_create.apply(redisClient, args.concat([err => {
             console.log('create index 2', err);
