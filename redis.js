@@ -16,9 +16,9 @@ async function connect(port, host) {
       redisClient = redis.createClient(port, host);
       redisClient.auth(redisKey, err => {
         if (!err) {
-          redisClient.ft_create.apply(redisClient, '${nftIndexName} PREFIX ${tableNames.mainnetSidechainNft} SCHEMA id NUMERIC SORTABLE currentOwnerAddress TEXT currentLocation TEXT description TEXT minterAddress TEXT ownerAddress TEXT properties TEXT ext TEXT hash TEXT name TEXT unlockable TEXT'.split(' ').concat([err => {
+          redisClient.ft_create.apply(redisClient, '${nftIndexName} PREFIX ${JSON.stringify(tableNames.mainnetSidechainNft)} SCHEMA id NUMERIC SORTABLE currentOwnerAddress TEXT currentLocation TEXT description TEXT minterAddress TEXT ownerAddress TEXT properties TEXT ext TEXT hash TEXT name TEXT unlockable TEXT'.split(' ').concat([err => {
             if (!err) { // cache initialization is a soft error
-              console.warn(err);
+              console.warn('index create error', err);
             }
             accept();
           }]));
