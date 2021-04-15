@@ -1,6 +1,6 @@
 const {getRedisItem, putRedisItem} = require('./redis.js');
 const {getChainNft, getChainAccount, getAllWithdrawsDeposits} = require('./tokens.js');
-const {ids, tableNames} = require('./constants.js');
+const {ids, redisredisPrefixes} = require('./constants.js');
 const {getBlockchain, getPastEvents, makeWeb3WebsocketContract} = require('./blockchain.js');
 const {connect} = require('./redis.js');
 
@@ -119,7 +119,7 @@ async function initAccountCache({chainName}) {
 
   const o = await getRedisItem(
     ids.lastCachedBlockAccount,
-    tableNames[chainName + 'Account']
+    redisPrefixes[chainName + 'Account']
   );
   const lastBlockNumber = o?.Item?.number || 0;
 
@@ -191,7 +191,7 @@ async function processEventNft({event, chainName}) {
       if (token.owner.address !== '0x0000000000000000000000000000000000000000') {
         const tokenIdNum = parseInt(tokenId, 10);
 
-        await putRedisItem(tokenIdNum, token, tableNames.mainnetsidechainNft);
+        await putRedisItem(tokenIdNum, token, redisPrefixes.mainnetsidechainNft);
       }
     } catch (e) {
       console.error(e);
@@ -199,6 +199,7 @@ async function processEventNft({event, chainName}) {
   } else if (hash) {
     // console.log('updating hash 1', hash);
     
+    // XXX
     const params = {
       FilterExpression: "#hash = :hash",
       ExpressionAttributeNames: {
@@ -221,7 +222,7 @@ async function processEventNft({event, chainName}) {
     // console.log('updating hash 3', tokens);
 
     await Promise.all(tokens.map(token => {
-      return putRedisItem(parseInt(token.id, 10), token, tableNames.mainnetsidechainNft);
+      return putRedisItem(parseInt(token.id, 10), token, redisPrefixes.mainnetsidechainNft);
     }));
     
     // console.log('updating hash 4');
@@ -231,7 +232,7 @@ async function processEventNft({event, chainName}) {
   await putRedisItem(ids.lastCachedBlockNft, {
     id: ids.lastCachedBlockNft,
     number: blockNumber,
-  }, tableNames.mainnetsidechainNft);
+  }, redisPrefixes.mainnetsidechainNft);
 }
 
 async function processEventsNft({events, currentBlockNumber, chainName}) {
@@ -275,14 +276,14 @@ async function processEventsNft({events, currentBlockNumber, chainName}) {
     );
 
     if (token.owner.address !== '0x0000000000000000000000000000000000000000') {
-      await putRedisItem(tokenId, token, tableNames.mainnetsidechainNft);
+      await putRedisItem(tokenId, token, redisPrefixes.mainnetsidechainNft);
     }
   }
   
   await putRedisItem(ids.lastCachedBlockNft, {
     id: ids.lastCachedBlockNft,
     number: currentBlockNumber,
-  }, tableNames.mainnetsidechainNft);
+  }, redisPrefixes.mainnetsidechainNft);
 }
 
 async function processEventAccount({contract, event, chainName}) {
@@ -300,7 +301,7 @@ async function processEventAccount({contract, event, chainName}) {
       // console.log('load account into cache', owner, account);
 
       // if (token.properties.hash) {
-        await putRedisItem(owner, account, tableNames.mainnetsidechainAccount);
+        await putRedisItem(owner, account, redisPrefixes.mainnetsidechainAccount);
       // }
     } catch (e) {
       console.error(e);
@@ -308,7 +309,7 @@ async function processEventAccount({contract, event, chainName}) {
   }
 
   const {blockNumber} = event;
-  await putRedisItem(ids.lastCachedBlockAccount, {number: blockNumber}, tableNames.mainnetsidechainAccount);
+  await putRedisItem(ids.lastCachedBlockAccount, {number: blockNumber}, redisPrefixes.mainnetsidechainAccount);
 }
 const _uniquify = (a, pred = (a, b) => a === b) => {
   return a.filter((e, i) => {
@@ -333,10 +334,10 @@ async function processEventsAccount({contract, events, currentBlockNumber, chain
       address: owner,
       chainName,
     });
-    await putRedisItem(owner, account, tableNames.mainnetsidechainAccount);
+    await putRedisItem(owner, account, redisPrefixes.mainnetsidechainAccount);
   }
   
-  await putRedisItem(ids.lastCachedBlockAccount, {number: currentBlockNumber}, tableNames.mainnetsidechainAccount);
+  await putRedisItem(ids.lastCachedBlockAccount, {number: currentBlockNumber}, redisPrefixes.mainnetsidechainAccount);
 }
 
 module.exports = {
