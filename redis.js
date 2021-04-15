@@ -8,6 +8,10 @@ const {redisKey} = require('./config.json');
 
 // c = r.createClient(); c.auth('lol', err => {c.hset('cities', 'id', 'A Town Created from Grafting.', err => { c.hget('cities', 'id', console.log); }); c.on('error', console.warn); }); c.ft_create.apply(c, 'idx SCHEMA id TEXT SORTABLE'.split(' ').concat([console.warn])); 1
 
+if (!tableNames.mainnetSidechainNft) {
+  console.log('fail', tableNames, mainnetSidechainNft, tableNames.mainnetSidechainNft);
+}
+
 let redisClient = null;
 let loadPromise = null;
 async function connect(port, host) {
