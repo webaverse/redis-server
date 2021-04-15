@@ -8,10 +8,6 @@ const {redisKey} = require('./config.json');
 
 // c = r.createClient(); c.auth('lol', err => {c.hset('cities', 'id', 'A Town Created from Grafting.', err => { c.hget('cities', 'id', console.log); }); c.on('error', console.warn); }); c.ft_create.apply(c, 'idx SCHEMA id TEXT SORTABLE'.split(' ').concat([console.warn])); 1
 
-if (!tableNames.mainnetSidechainNft) {
-  console.log('fail', tableNames, 'mainnetSidechainNft', tableNames.mainnetSidechainNft);
-}
-
 let redisClient = null;
 let loadPromise = null;
 async function connect(port, host) {
@@ -20,7 +16,7 @@ async function connect(port, host) {
       redisClient = redis.createClient(port, host);
       redisClient.auth(redisKey, err => {
         if (!err) {
-          const args = `${nftIndexName} PREFIX ${JSON.stringify(tableNames.mainnetSidechainNft)} SCHEMA id NUMERIC SORTABLE currentOwnerAddress TEXT currentLocation TEXT description TEXT minterAddress TEXT ownerAddress TEXT properties TEXT ext TEXT hash TEXT name TEXT unlockable TEXT`.split(' ');
+          const args = `${nftIndexName} PREFIX ${JSON.stringify(tableNames.mainnetsidechainNft)} SCHEMA id NUMERIC SORTABLE currentOwnerAddress TEXT currentLocation TEXT description TEXT minterAddress TEXT ownerAddress TEXT properties TEXT ext TEXT hash TEXT name TEXT unlockable TEXT`.split(' ');
           console.log('create index 1', args);
           redisClient.ft_create.apply(redisClient, args.concat([err => {
             console.log('create index 2', err);
