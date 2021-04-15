@@ -3,6 +3,7 @@ const redis = require('redis');
 const redisearch = require('redis-redisearch');
 redisearch(redis);
 const {makePromise} = require('./utils.js');
+const {nftIndexName, tableNames} = require('./constants.js');
 const {redisKey} = require('./config.json');
 
 // c = r.createClient(); c.auth('lol', err => {c.hset('cities', 'id', 'A Town Created from Grafting.', err => { c.hget('cities', 'id', console.log); }); c.on('error', console.warn); }); c.ft_create.apply(c, 'idx SCHEMA id TEXT SORTABLE'.split(' ').concat([console.warn])); 1
@@ -15,7 +16,7 @@ async function connect(port, host) {
       redisClient = redis.createClient(port, host);
       redisClient.auth(redisKey, err => {
         if (!err) {
-          redisClient.ft_create.apply(redisClient, 'idx SCHEMA id NUMERIC SORTABLE currentOwnerAddress TEXT currentLocation TEXT description TEXT minterAddress TEXT ownerAddress TEXT properties TEXT ext TEXT hash TEXT name TEXT unlockable TEXT'.split(' ').concat([err => {
+          redisClient.ft_create.apply(redisClient, '${nftIndexName} PREFIX ${tableNames.mainnetSidechainNft} SCHEMA id NUMERIC SORTABLE currentOwnerAddress TEXT currentLocation TEXT description TEXT minterAddress TEXT ownerAddress TEXT properties TEXT ext TEXT hash TEXT name TEXT unlockable TEXT'.split(' ').concat([err => {
             if (!err) { // cache initialization is a soft error
               console.warn(err);
             }
