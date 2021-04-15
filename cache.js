@@ -51,7 +51,7 @@ async function initNftCache({chainName}) {
 
   let o = await getRedisItem(
     ids.lastCachedBlockNft,
-    tableNames[chainName + 'Nft']
+    redisPrefixes[chainName + 'Nft']
   );
   const lastBlockNumber = o?.Item?.number || 0;
 
