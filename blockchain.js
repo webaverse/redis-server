@@ -96,7 +96,7 @@ const loadPromise = (async() => {
     )), */
     
     polygon: new Web3(new Web3.providers.HttpProvider(
-      `https://rpc-webverse-mainnet.maticvigil.com/v1/${polygonVigilKey}`
+      `https://rpc-mainnet.maticvigil.com/v1/${polygonVigilKey}`
     )),
     /* testnetpolygon: new Web3(new Web3.providers.HttpProvider(
       `https://rpc-mumbai.maticvigil.com/v1/${polygonVigilKey}`
