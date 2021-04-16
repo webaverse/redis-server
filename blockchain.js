@@ -103,7 +103,7 @@ const loadPromise = (async() => {
     )), */
   };
   
-  console.log('polygon provider', `wss://rpc-webaverse-mainnet.maticvigil.com/ws/v1/${polygonVigilKey}`);
+  // console.log('polygon provider', `wss://rpc-webaverse-mainnet.maticvigil.com/ws/v1/${polygonVigilKey}`);
   
   web3socketProviderUrls = {
     mainnet: `wss://mainnet.infura.io/ws/v3/${infuraProjectId}`,
