@@ -112,7 +112,7 @@ const loadPromise = (async() => {
     // testnet: `wss://rinkeby.infura.io/ws/v3/${infuraProjectId}`,
     // testnetsidechain: `${gethNodeWSUrl}:${ports.testnetsidechainWs}`,
     
-    polygon: `wss://rpc-webaverse-mainnet.maticvigil.com/ws/v1/${polygonVigilKey}`,
+    polygon: `wss://rpc-webverse-mainnet.maticvigil.com/ws/v1/${polygonVigilKey}`,
     // testnetpolygon: `wss://rpc-mumbai.maticvigil.com/ws/v1/${polygonVigilKey}`,
   };
   
