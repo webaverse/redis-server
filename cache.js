@@ -7,7 +7,7 @@ const {ids, redisPrefixes} = require('./constants.js');
 const {getBlockchain, getPastEvents, makeWeb3WebsocketContract} = require('./blockchain.js');
 const {connect} = require('./redis.js');
 
-async function initNftCache() {
+async function initNftCache({chainName}) {
   const {
     web3,
     contracts,
@@ -19,35 +19,42 @@ async function initNftCache() {
   await connect();
 
   const currentBlockNumber = 0;
-  const chainName = 'polygon';
-  const contractName = 'NFT';
+  // const chainName = 'polygon';
+  // const contractName = 'NFT';
 
   // Watch for new events.
   const _recurse = async currentBlockNumber => {
-    const u = `wss://rpc-webverse-mainnet.maticvigil.com/ws/v1/1bdde9289621d9d420488a9804254f4a958e128b`;
-    const web3socketProvider = new Web3.providers.WebsocketProvider(u);
-    const web3socket = new Web3(web3socketProvider);
-    const web3socketContract = new web3socket.eth.Contract(abis[contractName], addresses[chainName][contractName]);
+    const _getWsContract = () => {
+      if (chainName === 'polygon') {
+        const contractName = 'NFT';
+        const u = `wss://rpc-webverse-mainnet.maticvigil.com/ws/v1/1bdde9289621d9d420488a9804254f4a958e128b`;
+        const web3socketProvider = new Web3.providers.WebsocketProvider(u);
+        const web3socket = new Web3(web3socketProvider);
+        const web3socketContract = new web3socket.eth.Contract(abis[contractName], addresses[chainName][contractName]);
 
-    web3socketProvider.on('error', err => {
-      listener.emit('error', err);
-    });
-    web3socketProvider.on('end', () => {
-      listener.emit('end');
-    });
-    
-    const listener = new EventEmitter();
-    listener.disconnect = () => {
-      try {
-        web3socketProvider.disconnect();
-      } catch(err) {
-        console.warn(err);
+        web3socketProvider.on('error', err => {
+          listener.emit('error', err);
+        });
+        web3socketProvider.on('end', () => {
+          listener.emit('end');
+        });
+        
+        const listener = new EventEmitter();
+        listener.disconnect = () => {
+          try {
+            web3socketProvider.disconnect();
+          } catch(err) {
+            console.warn(err);
+          }
+        };
+        web3socketContract.listener = listener;
+      
+        return web3socketContract
+      } else {
+        return makeWeb3WebsocketContract(chainName, 'NFT');
       }
     };
-    web3socketContract.listener = listener;
-    
-    
-    const wsContract = web3socketContract;
+    const wsContract = _getWsContract();
     
     wsContract.events.allEvents({fromBlock: 0})
       .on('data', async function(event){
