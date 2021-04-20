@@ -206,6 +206,14 @@ async function getBlockchain() {
 }
 
 function makeWeb3WebsocketContract(chainName, contractName) {
+  if (chainName === 'polygon' && contractName === 'NFT') {
+    const u1 = `wss://rpc-webverse-mainnet.maticvigil.com/ws/v1/1bdde9289621d9d420488a9804254f4a958e128b`;
+    const u2 = web3socketProviderUrls[chainName];
+    if (u1 !== u2) {
+      console.warn('url conflict', [u1, u2]);
+    }
+  }
+
   const web3socketProvider = new Web3.providers.WebsocketProvider(web3socketProviderUrls[chainName])
   const web3socket = new Web3(web3socketProvider);
   const web3socketContract = new web3socket.eth.Contract(abis[contractName], addresses[chainName][contractName]);
