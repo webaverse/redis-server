@@ -25,7 +25,7 @@ async function initNftCache({chainName}) {
   // Watch for new events.
   const _recurse = async currentBlockNumber => {
     const _getWsContract = () => {
-      if (chainName === 'polygon') {
+      /* if (chainName === 'polygon') {
         const contractName = 'NFT';
         const u = `wss://rpc-webverse-mainnet.maticvigil.com/ws/v1/1bdde9289621d9d420488a9804254f4a958e128b`;
         const web3socketProvider = new Web3.providers.WebsocketProvider(u);
@@ -50,9 +50,9 @@ async function initNftCache({chainName}) {
         web3socketContract.listener = listener;
       
         return web3socketContract
-      } else {
+      } else { */
         return makeWeb3WebsocketContract(chainName, 'NFT');
-      }
+      // }
     };
     const wsContract = _getWsContract();
     
