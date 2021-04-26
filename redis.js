@@ -10,7 +10,7 @@ const {redisKey} = require('./config.json');
 
 let redisClient = null;
 let loadPromise = null;
-const _connectRedis = async () => new Promise((accept, reject) => {
+const _connectRedis = () => new Promise((accept, reject) => {
   redisClient = redis.createClient(port, host);
   redisClient.on('error', err => {
     console.warn(err);
