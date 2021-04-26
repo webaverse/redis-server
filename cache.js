@@ -196,40 +196,42 @@ async function processEventNft({event, chainName}) {
     } catch (e) {
       console.error(e);
     }
-  } else if (hash) {
-    console.log('updating hash 1', hash, event.returnValues);
+  } else if (hash && key && value) {
+    console.log('updating hash 1', {hash, key, value}, event.returnValues);
     
-    const tokens = await getRedisAllItems(redisPrefixes[chainName + 'Nft']);
-    const token = tokens.find(token => token.hash === hash);
-    console.log('updating hash 2', token);
-    
-    /* // XXX fix this
-    const params = {
-      FilterExpression: "#hash = :hash",
-      ExpressionAttributeNames: {
-        "#hash": "hash",
-      },
-      ExpressionAttributeValues: {
-        ':hash': hash,
-      },
-      TableName: redisPrefixes.mainnetsidechainNft,
-      IndexName: 'hash-index',
-    };
-    const o = await ddbd.scan(params).promise();
-    // console.log('got o', o);
-    let tokens = o.Items;
-    // console.log('updating hash 2', tokens);
-    for (const token of tokens) {
-      token[key] = value;
-    }
-    
-    // console.log('updating hash 3', tokens);
+    if (propertiesKeys.includes(key)) {
+      const tokens = await getRedisAllItems(redisPrefixes[chainName + 'Nft']);
+      const token = tokens.find(token => token.hash === hash);
+      console.log('updating hash 2', token);
+      
+      /* // XXX fix this
+      const params = {
+        FilterExpression: "#hash = :hash",
+        ExpressionAttributeNames: {
+          "#hash": "hash",
+        },
+        ExpressionAttributeValues: {
+          ':hash': hash,
+        },
+        TableName: redisPrefixes.mainnetsidechainNft,
+        IndexName: 'hash-index',
+      };
+      const o = await ddbd.scan(params).promise();
+      // console.log('got o', o);
+      let tokens = o.Items;
+      // console.log('updating hash 2', tokens);
+      for (const token of tokens) {
+        token[key] = value;
+      }
+      
+      // console.log('updating hash 3', tokens);
 
-    await Promise.all(tokens.map(token => {
-      return putRedisItem(parseInt(token.id, 10), token, redisPrefixes.mainnetsidechainNft);
-    }));
-    
-    // console.log('updating hash 4'); */
+      await Promise.all(tokens.map(token => {
+        return putRedisItem(parseInt(token.id, 10), token, redisPrefixes.mainnetsidechainNft);
+      }));
+      
+      // console.log('updating hash 4'); */
+    }
   }
 
   const {blockNumber} = event;
