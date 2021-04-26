@@ -77,8 +77,24 @@ async function putRedisItem(id, data, TableName) {
   await p;
 }
 
-async function getRedisAllItems(TableName = defaultDynamoTable) {
-  throw new Error('not implemented');
+async function getRedisAllItems(TableName) {
+  const keys = await redisClient.keys();
+  const prefix = `${TableName}:`;  
+  const indexKeyName = `${prefix}${nftIndexName}`;
+  let values = await Promise.all(keys.map(async key => {
+    if (key.startsWith(prefix) && !indexKeyName) {
+      if () {
+        await redisClient.hgetall(key);
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }));
+  values = values.filter(v => v !== null);
+  return values;
+  // throw new Error('not implemented');
   /* const params = {
     TableName,
   };
