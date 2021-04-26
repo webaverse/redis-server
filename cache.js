@@ -200,8 +200,8 @@ async function processEventNft({event, chainName}) {
     console.log('updating hash 1', hash, event.returnValues);
     
     const tokens = await getRedisAllItems(redisPrefixes[chainName + 'Nft']);
-    console.log('updating hash 2', tokens);
-    const token = tokens.find(token => token.hash === hash);    
+    const token = tokens.find(token => token.hash === hash);
+    console.log('updating hash 2', token);
     
     /* // XXX fix this
     const params = {
