@@ -10,7 +10,7 @@ const {redisKey} = require('./config.json');
 
 let redisClient = null;
 let loadPromise = null;
-const _connectRedis = () => new Promise((accept, reject) => {
+const _connectRedis = (port, host) => new Promise((accept, reject) => {
   redisClient = redis.createClient(port, host);
   redisClient.on('error', err => {
     console.warn(err);
@@ -27,7 +27,7 @@ const _connectRedis = () => new Promise((accept, reject) => {
         redisClient.on('end', () => {
           redisClient = null;
           
-          _connectRedis();
+          _connectRedis(port, host);
         });
         
         accept();
@@ -39,7 +39,7 @@ const _connectRedis = () => new Promise((accept, reject) => {
 });
 async function connect(port, host) {
   if (!loadPromise) {
-    loadPromise = _connectRedis();
+    loadPromise = _connectRedis(port, host);
   }
   await loadPromise;
 }
