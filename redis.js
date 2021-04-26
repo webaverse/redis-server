@@ -83,11 +83,7 @@ async function getRedisAllItems(TableName) {
   const indexKeyName = `${prefix}${nftIndexName}`;
   let values = await Promise.all(keys.map(async key => {
     if (key.startsWith(prefix) && !indexKeyName) {
-      if () {
-        await redisClient.hgetall(key);
-      } else {
-        return null;
-      }
+      await redisClient.hgetall(key);
     } else {
       return null;
     }
