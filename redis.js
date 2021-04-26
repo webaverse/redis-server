@@ -77,20 +77,71 @@ async function putRedisItem(id, data, TableName) {
   await p;
 }
 
-async function getRedisAllItems(TableName) {
-  const keys = await redisClient.keys();
-  const prefix = `${TableName}:`;  
-  const indexKeyName = `${prefix}${nftIndexName}`;
-  let values = await Promise.all(keys.map(async key => {
-    if (key.startsWith(prefix) && !indexKeyName) {
-      await redisClient.hgetall(key);
-    } else {
-      return null;
+async function getRedisAllItems(TableName = defaultDynamoTable) {
+  // console.time('lol 1');
+  let keys = await new Promise((accept, reject) => {
+    redisClient.keys(`${TableName}:*`, (err, result) => {
+      if (!err) {
+        accept(result);
+      } else {
+        reject(err);
+      }
+    });
+  });
+  // console.log('got old keys', keys, {lastCachedBlockAccountId: ids.lastCachedBlockAccount});
+  const filterKey = `${TableName}:${ids.lastCachedBlockAccount}`;
+  keys = keys.filter(key => key !== filterKey);
+  // console.timeEnd('lol 1');
+  
+  // console.time('lol 2');
+  const _runJobs = jobs => new Promise((accept, reject) => {
+    const maxTasksInFlight = 100;
+    let tasksInFlight = 0;
+    const _recurse = async () => {
+      if (tasksInFlight < maxTasksInFlight && jobs.length > 0) {
+        tasksInFlight++;
+        try {
+          await jobs.shift()();
+        } catch(err) {
+          console.warn(err);
+        } finally {
+          tasksInFlight--;
+        }
+        _recurse();
+      } else if (tasksInFlight === 0) {
+        accept();
+      }
+    };
+    for (let i = 0; i < jobs.length; i++) {
+      _recurse();
     }
+  });
+  
+  const items = [];
+  await _runJobs(keys.map(k => async () => {
+    // console.time('inner 1: ' + k);
+    const item = await new Promise((accept, reject) => {
+      redisClient.hgetall(k, (err, result) => {
+        if (!err) {
+          for (const k in result){
+            try {
+              result[k] = JSON.parse(result[k]);
+            } catch(err) {
+              console.warn('failed to parse key', result, k, err);
+            }
+          }
+          accept(result);
+        } else {
+          reject(err);
+        }
+      });
+    });
+    // console.timeEnd('inner 1: ' + k);
+    items.push(item);
   }));
-  values = values.filter(v => v !== null);
-  return values;
-  // throw new Error('not implemented');
+  // console.timeEnd('lol 2');
+  return items;
+
   /* const params = {
     TableName,
   };
