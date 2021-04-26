@@ -199,7 +199,7 @@ async function processEventNft({event, chainName}) {
   } else if (hash) {
     // console.log('updating hash 1', hash);
     
-    // XXX
+    // XXX fix this
     const params = {
       FilterExpression: "#hash = :hash",
       ExpressionAttributeNames: {
