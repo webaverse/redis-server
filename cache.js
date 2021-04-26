@@ -197,9 +197,13 @@ async function processEventNft({event, chainName}) {
       console.error(e);
     }
   } else if (hash) {
-    // console.log('updating hash 1', hash);
+    console.log('updating hash 1', hash, event.returnValues);
     
-    // XXX fix this
+    const tokens = await getRedisAllItems(redisPrefixes[chainName + 'Nft']);
+    console.log('updating hash 2', tokens);
+    const token = tokens.find(token => token.hash === hash);    
+    
+    /* // XXX fix this
     const params = {
       FilterExpression: "#hash = :hash",
       ExpressionAttributeNames: {
@@ -225,7 +229,7 @@ async function processEventNft({event, chainName}) {
       return putRedisItem(parseInt(token.id, 10), token, redisPrefixes.mainnetsidechainNft);
     }));
     
-    // console.log('updating hash 4');
+    // console.log('updating hash 4'); */
   }
 
   const {blockNumber} = event;
