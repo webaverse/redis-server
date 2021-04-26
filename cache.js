@@ -208,7 +208,7 @@ async function processEventNft({event, chainName}) {
       ExpressionAttributeValues: {
         ':hash': hash,
       },
-      TableName: tableNames.mainnetsidechainNft,
+      TableName: redisPrefixes.mainnetsidechainNft,
       IndexName: 'hash-index',
     };
     const o = await ddbd.scan(params).promise();
