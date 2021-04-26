@@ -38,3 +38,9 @@ cp.on('exit', code => {
 process.on('exit', () => {
   cp.kill();
 });
+
+const _warn = err => {
+  console.warn('uncaught: ' + err.stack);
+};
+process.on('uncaughtException', _warn);
+process.on('unhandledRejection', _warn);
