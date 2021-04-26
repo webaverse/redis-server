@@ -2,7 +2,7 @@ const {getRedisItem, putRedisItem} = require('./redis.js');
 const {getChainNft, getChainAccount, getAllWithdrawsDeposits} = require('./tokens.js');
 const {ids, redisPrefixes} = require('./constants.js');
 const {getBlockchain, getPastEvents, makeWeb3WebsocketContract} = require('./blockchain.js');
-const {connect} = require('./redis.js');
+const {connect, getRedisAllItems} = require('./redis.js');
 
 async function initNftCache({chainName}) {
   const {
