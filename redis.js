@@ -10,26 +10,36 @@ const {redisKey} = require('./config.json');
 
 let redisClient = null;
 let loadPromise = null;
+const _connectRedis = async () => new Promise((accept, reject) => {
+  redisClient = redis.createClient(port, host);
+  redisClient.on('error', err => {
+    console.warn(err);
+  });
+  redisClient.auth(redisKey, err => {
+    if (!err) {
+      const args = `${nftIndexName} PREFIX 1 ${redisPrefixes.mainnetsidechainNft}: SCHEMA id NUMERIC SORTABLE currentOwnerAddress TEXT currentLocation TEXT description TEXT minterAddress TEXT ownerAddress TEXT properties TEXT ext TEXT hash TEXT name TEXT unlockable TEXT`.split(' ');
+      console.log('create index 1', args);
+      redisClient.ft_create.apply(redisClient, args.concat([err => {
+        console.log('create index 2', err);
+        /* if (err) { // cache initialization is a soft error
+          console.warn('index create error', err);
+        } */
+        redisClient.on('end', () => {
+          redisClient = null;
+          
+          _connectRedis();
+        });
+        
+        accept();
+      }]));
+    } else {
+      reject(err);
+    }
+  });
+});
 async function connect(port, host) {
   if (!loadPromise) {
-    loadPromise = new Promise((accept, reject) => {
-      redisClient = redis.createClient(port, host);
-      redisClient.auth(redisKey, err => {
-        if (!err) {
-          const args = `${nftIndexName} PREFIX 1 ${redisPrefixes.mainnetsidechainNft}: SCHEMA id NUMERIC SORTABLE currentOwnerAddress TEXT currentLocation TEXT description TEXT minterAddress TEXT ownerAddress TEXT properties TEXT ext TEXT hash TEXT name TEXT unlockable TEXT`.split(' ');
-          console.log('create index 1', args);
-          redisClient.ft_create.apply(redisClient, args.concat([err => {
-            console.log('create index 2', err);
-            /* if (err) { // cache initialization is a soft error
-              console.warn('index create error', err);
-            } */
-            accept();
-          }]));
-        } else {
-          reject(err);
-        }
-      });
-    });
+    loadPromise = _connectRedis();
   }
   await loadPromise;
 }
