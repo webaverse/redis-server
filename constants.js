@@ -13,11 +13,19 @@ const accountKeys = [
   // 'mainnetAddress',
   'addressProofs',
 ];
-const propertiesKeys = [
-  'address',
-  'username',
-  'avatarPreview',
-  'monetizationPointer',
+const nftKeys = [
+  'name',
+  'description',
+  'ext',
+  'image',
+  'unlockable',
+];
+const nftPropertiesKeys = [
+  'name',
+  'description',
+  'ext',
+  'image',
+  'unlockable',
 ];
 const ids = {
   lastCachedBlockAccount: 'lastCachedBlock',
@@ -51,7 +59,8 @@ const storageHost = 'https://ipfs.exokit.org';
 const mainnetSignatureMessage = `Connecting mainnet address.`;
 module.exports = {
   accountKeys,
-  propertiesKeys,
+  nftKeys,
+  nftPropertiesKeys,
   ids,
   tableNames,
   redisPrefixes,
