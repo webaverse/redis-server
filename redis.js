@@ -3,7 +3,7 @@ const redis = require('redis');
 const redisearch = require('redis-redisearch');
 redisearch(redis);
 const {makePromise} = require('./utils.js');
-const {nftIndexName, redisPrefixes} = require('./constants.js');
+const {ids, nftIndexName, redisPrefixes} = require('./constants.js');
 const {redisKey} = require('./config.json');
 
 // c = r.createClient(); c.auth('lol', err => {c.hset('cities', 'id', 'A Town Created from Grafting.', err => { c.hget('cities', 'id', console.log); }); c.on('error', console.warn); }); c.ft_create.apply(c, 'idx SCHEMA id TEXT SORTABLE'.split(' ').concat([console.warn])); 1
