@@ -416,7 +416,7 @@ const formatToken = contractName => chainName => async (token, storeEntries, mai
   // console.log('format token', {id: token.id});
   
   const tokenId = parseInt(token.id, 10);
-  const {name, ext, unlockable, hash} = token;
+  const {name, ext, unlockable, encrypted, hash} = token;
 
   const {
     contracts,
@@ -517,6 +517,7 @@ const formatToken = contractName => chainName => async (token, storeEntries, mai
     hash,
     ext,
     unlockable,
+    encrypted,
     image: 'https://preview.exokit.org/' + hash + '.' + ext + '/preview.png',
     external_url: 'https://app.webaverse.com?h=' + hash,
     animation_url: `${storageHost}/${hash}/preview.${ext === 'vrm' ? 'glb' : ext}`,
@@ -525,6 +526,7 @@ const formatToken = contractName => chainName => async (token, storeEntries, mai
       hash,
       ext,
       unlockable,
+      encrypted,
     },
     minterAddress: minter.address.toLowerCase(),
     minter,
@@ -556,7 +558,7 @@ const formatLand = contractName => chainName => async (token, storeEntries) => {
 
   const tokenId = parseInt(token.id, 10);
   // console.log('got token', token);
-  const {name, hash, ext, unlockable} = token;
+  const {name, hash, ext, unlockable, encrypted} = token;
   const [
     description,
     rarity,
@@ -592,6 +594,7 @@ const formatLand = contractName => chainName => async (token, storeEntries) => {
       extents,
       ext,
       unlockable,
+      encrypted,
     },
     owner,
     balance: parseInt(token.balance, 10),
@@ -640,10 +643,21 @@ const getChainNft = contractName => chainName => async (tokenId, storeEntries, m
       const tokenSrc = await contracts[chainName][contractName].methods.tokenByIdFull(tokenId).call();
       const token = _copy(tokenSrc);
       const {hash} = token;
-      token.unlockable = await contracts[chainName].NFT.methods.getMetadata(hash, 'unlockable').call();
-      if (!token.unlockable) {
-        token.unlockable = '';
+      let [
+        unlockable,
+        encrypted,
+      ] = await Promise.all([
+        contracts[chainName].NFT.methods.getMetadata(hash, 'unlockable').call(),
+        contracts[chainName].NFT.methods.getMetadata(hash, 'encrypted').call(),
+      ]);
+      if (!unlockable) {
+        unlockable = '';
       }
+      if (!encrypted) {
+        encrypted = '';
+      }
+      token.unlockable = unlockable;
+      token.encrypted = encrypted;
       return token;
     })(),
     /* (async () => {
