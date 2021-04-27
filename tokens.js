@@ -141,7 +141,15 @@ const _cancelEntry = (deposits, withdraws, currentLocation, nextLocation, curren
     return null;
   }
 };
-const _cancelEntries = (mainnetDepositedEntries, mainnetWithdrewEntries, sidechainDepositedEntries, sidechainWithdrewEntries, polygonDepositedEntries, polygonWithdrewEntries, currentAddress) => {
+const _cancelEntries = (
+  mainnetDepositedEntries,
+  mainnetWithdrewEntries,
+  sidechainDepositedEntries,
+  sidechainWithdrewEntries,
+  polygonDepositedEntries,
+  polygonWithdrewEntries,
+  currentAddress
+) => {
   let currentLocation = 'mainnetsidechain';
   let transactionHash = '';
   
