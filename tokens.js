@@ -388,7 +388,7 @@ const _cancelEntries = (mainnetDepositedEntries, mainnetWithdrewEntries, sidecha
   if (danglingDepositedEntries.length > 0) {
     currentLocation += '-stuck';
     transactionHash = danglingDepositedEntries[0].transactionHash;
-    console.log('totally stuck', currentLocation, transactionHash);
+    // console.log('totally stuck', currentLocation, transactionHash);
   }
 
   return [
