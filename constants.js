@@ -19,6 +19,7 @@ const nftKeys = [
   'ext',
   'image',
   'unlockable',
+  'encrypted',
 ];
 const nftPropertiesKeys = [
   'name',
@@ -26,6 +27,7 @@ const nftPropertiesKeys = [
   'ext',
   'image',
   'unlockable',
+  'encrypted',
 ];
 const ids = {
   lastCachedBlockAccount: 'lastCachedBlock',
