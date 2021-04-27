@@ -478,6 +478,7 @@ const formatToken = contractName => chainName => async (token, storeEntries, mai
   polygonWithdrewEntries = result[5];
   const currentLocation = result[6];
   sidechainMinterAddress = result[7];
+  const stuckTransactionHash = result[8];
 
   /* console.log('got entries 2', {
     mainnetDepositedEntries,
@@ -535,6 +536,7 @@ const formatToken = contractName => chainName => async (token, storeEntries, mai
     buyPrice,
     storeId,
     currentLocation,
+    stuckTransactionHash,
   };
   console.log('got token', JSON.stringify(o, null, 2));
   return o;
