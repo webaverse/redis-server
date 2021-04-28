@@ -543,7 +543,7 @@ const formatToken = contractName => chainName => async (token, storeEntries, mai
     currentLocation,
     stuckTransactionHash,
   };
-  console.log('got token 2', JSON.stringify(o, null, 2));
+  console.log('got token', JSON.stringify(o, null, 2));
   return o;
 };
 const formatLand = contractName => chainName => async (token, storeEntries) => {
