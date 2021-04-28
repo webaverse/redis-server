@@ -178,7 +178,7 @@ const _cancelEntries = (
           mainnetWithdrewEntries = result[1];
           currentLocation = result[2];
           currentAddress = result[3];
-          transactionHash = result[4];
+          // transactionHash = result[4];
           changed = true;
         
           console.log('sidechain -> mainnet', !/stuck/.test(result[2]), currentLocation, currentAddress, transactionHash, JSON.stringify({
@@ -197,7 +197,7 @@ const _cancelEntries = (
               sidechainWithdrewEntries = result2[1];
               currentLocation = result2[2];
               currentAddress = result2[3];
-              transactionHash = result2[4];
+              // transactionHash = result2[4];
               changed = true;
               
               console.log('mainnet -> sidechain', !/stuck/.test(result[2]), currentLocation, currentAddress, transactionHash, JSON.stringify({
@@ -239,7 +239,7 @@ const _cancelEntries = (
           polygonWithdrewEntries = result[1];
           currentLocation = result[2];
           currentAddress = result[3];
-          transactionHash = result[4];
+          // transactionHash = result[4];
           changed = true;
         
           console.log('sidechain -> polygon', !/stuck/.test(result[2]), currentLocation, currentAddress, transactionHash, JSON.stringify({
@@ -257,7 +257,7 @@ const _cancelEntries = (
             sidechainWithdrewEntries = result2[1];
             currentLocation = result2[2];
             currentAddress = result2[3];
-            transactionHash = result2[4];
+            // transactionHash = result2[4];
             changed = true;
             
             console.log('polygon -> sidechain', !/stuck/.test(result[2]), currentLocation, currentAddress, transactionHash, JSON.stringify({
