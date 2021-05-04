@@ -397,7 +397,7 @@ const _cancelEntries = (
     currentLocation += '-stuck';
     transactionHash = danglingDepositedEntries[0].transactionHash;
     // console.log('totally stuck', currentLocation, transactionHash);
-    console.log('got dangler 1', danglingDepositedEntries transactionHash);
+    console.log('got dangler 1', danglingDepositedEntries, transactionHash);
   } else {
     console.log('got dangler 2', danglingDepositedEntries);
   }
