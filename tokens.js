@@ -1,4 +1,4 @@
-const {accountKeys, storageHost} = require('./constants.js');
+const {accountKeys, storageHost, appPreviewHost} = require('./constants.js');
 const {getBlockchain, getPastEvents} = require('./blockchain.js');
 
 const zeroAddress = '0x0000000000000000000000000000000000000000';
@@ -513,6 +513,26 @@ const formatToken = contractName => chainName => async (token, storeEntries, mai
   const storeEntry = storeEntries.find(entry => entry.tokenId === tokenId);
   const buyPrice = storeEntry ? storeEntry.price : null;
   const storeId = storeEntry ? storeEntry.id : null;
+  const animation_url = (() => {
+    let localExt = ext;
+    if (localExt === 'vrm') {
+      localExt = 'glb';
+    }
+    switch (localExt) {
+      case 'png':
+      case 'jpg':
+      case 'gif':
+      case 'mp3':
+      case 'mp4':
+      case 'glb':
+      {
+        return `${storageHost}/${hash}/preview.${localExt}`;
+      }
+      default: {
+        return `${appPreviewHost}?id=${tokenId}`;
+      }
+    }
+  })();
   const o = {
     id: tokenId,
     name,
