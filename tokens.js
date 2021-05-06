@@ -528,6 +528,9 @@ const formatToken = contractName => chainName => async (token, storeEntries, mai
       {
         return `${storageHost}/${hash}/preview.${localExt}`;
       }
+      case 'html': {
+        return `${storageHost}/ipfs/${hash}`;
+      }
       default: {
         return `${appPreviewHost}?id=${tokenId}`;
       }
