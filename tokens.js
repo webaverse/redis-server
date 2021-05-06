@@ -523,7 +523,7 @@ const formatToken = contractName => chainName => async (token, storeEntries, mai
   const storeId = storeEntry ? storeEntry.id : null;
   const animation_url = (() => {
     if (rawSupportedTypes.includes(ext)) {
-      return `${storageHost}/${hash}/preview.${localExt}`;
+      return `${storageHost}/${hash}/preview.${ext}`;
     } else if (ext === 'html') {
       return `${storageHost}/ipfs/${hash}`;
     } else {
