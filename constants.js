@@ -58,6 +58,7 @@ const nftIndexName = 'nftIdx';
 const polygonVigilKey = `1bdde9289621d9d420488a9804254f4a958e128b`;
 const ethereumHost = 'ethereum.exokit.org';
 const storageHost = 'https://ipfs.exokit.org';
+const appPreviewHost = `https://app.webaverse.com/preview.html`;
 const mainnetSignatureMessage = `Connecting mainnet address.`;
 module.exports = {
   accountKeys,
@@ -70,5 +71,6 @@ module.exports = {
   polygonVigilKey,
   ethereumHost,
   storageHost,
+  appPreviewHost,
   mainnetSignatureMessage,
 };
