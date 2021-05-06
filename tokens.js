@@ -2,6 +2,14 @@ const {accountKeys, storageHost, appPreviewHost} = require('./constants.js');
 const {getBlockchain, getPastEvents} = require('./blockchain.js');
 
 const zeroAddress = '0x0000000000000000000000000000000000000000';
+const rawSupportedTypes = [
+  'png',
+  'jpg',
+  'gif',
+  'mp3',
+  'mp4',
+  'glb',
+];
 const defaultAvatarPreview = `https://preview.exokit.org/[https://raw.githubusercontent.com/avaer/vrm-samples/master/vroid/male.vrm]/preview.png`;
 const _log = async (text, p) => {
   // console.log('start pull', text);
@@ -514,26 +522,12 @@ const formatToken = contractName => chainName => async (token, storeEntries, mai
   const buyPrice = storeEntry ? storeEntry.price : null;
   const storeId = storeEntry ? storeEntry.id : null;
   const animation_url = (() => {
-    let localExt = ext;
-    if (localExt === 'vrm') {
-      localExt = 'glb';
-    }
-    switch (localExt) {
-      case 'png':
-      case 'jpg':
-      case 'gif':
-      case 'mp3':
-      case 'mp4':
-      case 'glb':
-      {
-        return `${storageHost}/${hash}/preview.${localExt}`;
-      }
-      case 'html': {
-        return `${storageHost}/ipfs/${hash}`;
-      }
-      default: {
-        return `${appPreviewHost}?id=${tokenId}`;
-      }
+    if (rawSupportedTypes.includes(ext)) {
+      return `${storageHost}/${hash}/preview.${localExt}`;
+    } else if (ext === 'html') {
+      return `${storageHost}/ipfs/${hash}`;
+    } else {
+      return `${appPreviewHost}?id=${tokenId}`;
     }
   })();
   const o = {
