@@ -522,7 +522,7 @@ const formatToken = contractName => chainName => async (token, storeEntries, mai
     unlockable,
     encrypted,
     image: 'https://preview.exokit.org/' + hash + '.' + ext + '/preview.png',
-    external_url: 'https://app.webaverse.com?h=' + hash,
+    external_url: `https://webaverse.com/assets/${id}`,
     animation_url: `${storageHost}/${hash}/preview.${ext === 'vrm' ? 'glb' : ext}`,
     properties: {
       name,
