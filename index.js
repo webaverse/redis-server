@@ -1,7 +1,7 @@
 const fs = require('fs');
 const child_process = require('child_process');
 const {initCaches} = require('./cache.js');
-const {redisKey} = require('./config.json');
+const {redisKey} = require('./environment.js');
 
 let redisConfTxt = fs.readFileSync('./redis.conf.template', 'utf8');
 redisConfTxt = redisConfTxt.replace(/# requirepass foobared/, `requirepass ${redisKey}`);

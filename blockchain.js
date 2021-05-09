@@ -4,11 +4,7 @@ const dns = require('dns');
 const https = require('https');
 const fetch = require('node-fetch');
 const Web3 = require('web3');
-const {polygonVigilKey, ethereumHost} = require('./constants.js');
-
-let config = require('fs').existsSync('./config.json') ? require('./config.json') : null;
-
-const infuraProjectId = process.env.infuraProjectId || config.infuraProjectId;
+const {polygonVigilKey, ethereumHost, infuraProjectId} = require('./environment.js');
 
 let addresses,
   abis,
