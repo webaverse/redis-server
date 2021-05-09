@@ -1,5 +1,6 @@
-const {accountKeys, storageHost, appPreviewHost} = require('./constants.js');
+const {accountKeys} = require('./constants.js');
 const {getBlockchain, getPastEvents} = require('./blockchain.js');
+const {storageHost, appPreviewHost} = require('./environment.js');
 
 const zeroAddress = '0x0000000000000000000000000000000000000000';
 const rawSupportedTypes = [
