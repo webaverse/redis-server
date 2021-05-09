@@ -4,7 +4,7 @@ const fs = require('fs');
 
 const config = fs.existsSync(__dirname + '/config.json') ? require('./config.json') : null;
 
-const redisKey = (config && config.redisKey) ?? process.env.REDIS_KEY;
+const redisKey = (config && config.redisKey) ?? process.env.REDIS_KEY ?? "default";
 const polygonVigilKey = (config && config.polygonVigilKey) ?? process.env.POLYGON_VIGIL_KEY ?? `1bdde9289621d9d420488a9804254f4a958e128b`;
 const infuraProjectId = (config && config.infuraProjectId) ?? process.env.infuraProjectId;
 const ethereumHost = (config && config.ethereumHost) ?? process.env.ETHEREUM_HOST ?? 'ethereum.exokit.org';
