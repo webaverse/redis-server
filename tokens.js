@@ -868,7 +868,7 @@ const getAllWithdrawsDeposits = contractName => async chainName => {
   } = getChainNames(chainName);
 
   // Polygon getPastEvent calls must be rated.
-  let getEventsHandler = chainName = 'polygon'
+  const getEventsHandler = chainName = 'polygon'
     ? getPastEvents
     : getEventsRated
 
