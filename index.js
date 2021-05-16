@@ -11,8 +11,8 @@ const {redisKey} = require('./config.json');
 const fullchainPath = './certs/fullchain.pem';
 const privkeyPath = './certs/privkey.pem';
 
-const httpPort = process.env.HTTP_PORT || 4444;
-const httpsPort = process.env.HTTPS_PORT || 4445;
+const httpPort = process.env.HTTP_PORT || 80;
+const httpsPort = process.env.HTTPS_PORT || 443;
 
 // console.log("HTTP Port is", httpPort);
 // console.log("HTTPS Port is", httpsPort);
