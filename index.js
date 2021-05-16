@@ -79,7 +79,7 @@ app.get('*', async (req, res, next) => {
   if (o.hostname === 'stuck-debug.webaverse.com') {
     const {pathname} = o;
     const match = pathname.match(/^\/([^\/]+)\/([^\/]+)$/);
-    console.log('match', pathname, match);
+    // console.log('match', pathname, match);
     if (match) {
       const contractName = match[1];
       const chainName = match[2];
