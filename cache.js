@@ -252,7 +252,7 @@ async function processEventNft({event, chainName}) {
   await putRedisItem(ids.lastCachedBlockNft, {
     id: ids.lastCachedBlockNft,
     number: blockNumber,
-  }, redisPrefixes.mainnetsidechainNft);
+  }, redisPrefixes[chainName + 'Nft']);
 }
 
 async function processEventsNft({events, currentBlockNumber, chainName}) {
@@ -299,11 +299,11 @@ async function processEventsNft({events, currentBlockNumber, chainName}) {
       await putRedisItem(tokenId, token, redisPrefixes.mainnetsidechainNft);
     }
   }
-  
+
   await putRedisItem(ids.lastCachedBlockNft, {
     id: ids.lastCachedBlockNft,
     number: currentBlockNumber,
-  }, redisPrefixes.mainnetsidechainNft);
+  }, redisPrefixes[chainName + 'Nft']);
 }
 
 async function processEventAccount({contract, event, chainName}) {
@@ -317,11 +317,11 @@ async function processEventAccount({contract, event, chainName}) {
         address: owner,
         chainName,
       });
-      
+
       // console.log('load account into cache', owner, account);
 
       // if (token.properties.hash) {
-        await putRedisItem(owner, account, redisPrefixes.mainnetsidechainAccount);
+      await putRedisItem(owner, account, redisPrefixes.mainnetsidechainAccount);
       // }
     } catch (e) {
       console.error(e);
@@ -329,7 +329,7 @@ async function processEventAccount({contract, event, chainName}) {
   }
 
   const {blockNumber} = event;
-  await putRedisItem(ids.lastCachedBlockAccount, {number: blockNumber}, redisPrefixes.mainnetsidechainAccount);
+  await putRedisItem(ids.lastCachedBlockAccount, {number: blockNumber}, redisPrefixes[chainName + 'Account']);
 }
 const _uniquify = (a, pred = (a, b) => a === b) => {
   return a.filter((e, i) => {
@@ -356,8 +356,8 @@ async function processEventsAccount({contract, events, currentBlockNumber, chain
     });
     await putRedisItem(owner, account, redisPrefixes.mainnetsidechainAccount);
   }
-  
-  await putRedisItem(ids.lastCachedBlockAccount, {number: currentBlockNumber}, redisPrefixes.mainnetsidechainAccount);
+
+  await putRedisItem(ids.lastCachedBlockAccount, {number: currentBlockNumber}, redisPrefixes[chainName + 'Account']);
 }
 
 module.exports = {
