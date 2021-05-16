@@ -1,7 +1,7 @@
 const {getRedisItem, putRedisItem} = require('./redis.js');
 const {getChainNft, getChainAccount, getAllWithdrawsDeposits} = require('./tokens.js');
 const {nftKeys, nftPropertiesKeys, ids, redisPrefixes} = require('./constants.js');
-const {getBlockchain, getPastEvents, makeWeb3WebsocketContract} = require('./blockchain.js');
+const {getBlockchain, getEventsRated, getPastEvents, makeWeb3WebsocketContract} = require('./blockchain.js');
 const {connect, getRedisAllItems} = require('./redis.js');
 
 async function initNftCache({chainName}) {
@@ -21,9 +21,9 @@ async function initNftCache({chainName}) {
     wsContract.events.allEvents({fromBlock: currentBlockNumber})
       .on('data', async function(event){
         console.log('nft event', chainName, event);
-        
+
         currentBlockNumber = Math.max(currentBlockNumber, event.blockNumber);
-        
+
         await processEventNft({
           event,
           chainName,
@@ -40,9 +40,9 @@ async function initNftCache({chainName}) {
     });
     wsContract.listener.on('end', async () => {
       console.log('reconnect nft listener', chainName);
-      
+
       wsContract.listener.disconnect();
-      
+
       // const currentBlockNumber = await web3[chainName].eth.getBlockNumber();
       _recurse(currentBlockNumber);
     });
@@ -57,11 +57,18 @@ async function initNftCache({chainName}) {
 
   // Catch up on missing blocks.
   if (currentBlockNumber !== lastBlockNumber) {
-    const events = await getPastEvents({
-      chainName,
-      contractName: 'NFT',
-      fromBlock: lastBlockNumber,
-    });
+    const events = chainName === 'polygon'
+      ? await getEventsRated({
+        chainName,
+        contractName: 'NFT',
+        fromBlock: lastBlockNumber,
+      })
+      : await getPastEvents({
+        chainName,
+        contractName: 'NFT',
+        fromBlock: lastBlockNumber,
+      });
+
     if (events.length > 0) {
       await processEventsNft({
         events,
@@ -77,18 +84,18 @@ async function initAccountCache({chainName}) {
     contracts,
     // wsContracts,
   } = await getBlockchain();
-  
+
   const currentBlockNumber = await web3[chainName].eth.getBlockNumber();
-  
+
   // Watch for new events.
   const _recurse = currentBlockNumber => {
     const wsContract = makeWeb3WebsocketContract(chainName, 'Account');
     wsContract.events.allEvents({fromBlock: currentBlockNumber})
       .on('data', async function(event){
         console.log('account event', chainName, event);
-        
+
         currentBlockNumber = Math.max(currentBlockNumber, event.blockNumber);
-        
+
         await processEventAccount({
           event,
           chainName,
@@ -99,7 +106,7 @@ async function initAccountCache({chainName}) {
       })
       .on('error', async err => {
         console.warn('error account', chainName, err);
-        
+
         const currentBlockNumber = await web3[chainName].eth.getBlockNumber();
         _recurse(currentBlockNumber);
       }); */
@@ -108,9 +115,9 @@ async function initAccountCache({chainName}) {
     });
     wsContract.listener.on('end', async () => {
       console.log('reconnect account listener', chainName);
-      
+
       wsContract.listener.disconnect();
-      
+
       // const currentBlockNumber = await web3[chainName].eth.getBlockNumber();
       _recurse(currentBlockNumber);
     });
@@ -125,11 +132,18 @@ async function initAccountCache({chainName}) {
 
   // Catch up on missing blocks.
   if (currentBlockNumber !== lastBlockNumber) {
-    const events = await getPastEvents({
-      chainName,
-      contractName: 'Account',
-      fromBlock: lastBlockNumber,
-    });
+    const events = chainName === 'polygon'
+      ? await getEventsRated({
+        chainName,
+        contractName: 'Account',
+        fromBlock: lastBlockNumber,
+      })
+      : await getPastEvents({
+        chainName,
+        contractName: 'Account',
+        fromBlock: lastBlockNumber,
+      });
+
     if (events.length > 0) {
       await processEventsAccount({
         events,
@@ -176,7 +190,7 @@ async function processEventNft({event, chainName}) {
         polygonDepositedEntries,
         polygonWithdrewEntries,
       } = await getAllWithdrawsDeposits('NFT')(chainName);
-      
+
       const token = await getChainNft('NFT')(chainName)(
         tokenId,
         storeEntries,
@@ -198,7 +212,7 @@ async function processEventNft({event, chainName}) {
     }
   } else if (hash && key && value) {
     console.log('updating hash 1', {hash, key, value}, event.returnValues);
-    
+
     const tokens = await getRedisAllItems(redisPrefixes[chainName + 'Nft']);
     const token = tokens.find(token => token.hash === hash);
     console.log('updating hash 2', token);
@@ -207,7 +221,7 @@ async function processEventNft({event, chainName}) {
       if (nftKeys.includes(key)) {
         token[key] = value;
         updated = true;
-        
+
         /* // XXX fix this
         const params = {
           FilterExpression: "#hash = :hash",
@@ -227,18 +241,18 @@ async function processEventNft({event, chainName}) {
         for (const token of tokens) {
           token[key] = value;
         }
-        
+
         // console.log('updating hash 3', tokens);
 
         await Promise.all(tokens.map(token => {
           return putRedisItem(parseInt(token.id, 10), token, redisPrefixes.mainnetsidechainNft);
         }));
-        
+
         // console.log('updating hash 4'); */
       }
       if (nftPropertiesKeys.includes(key)) {
         token.properties[key] = value;
-        updated = true; 
+        updated = true;
       }
       if (updated) {
         await putRedisItem(token.id, token, redisPrefixes.mainnetsidechainNft);
@@ -299,7 +313,7 @@ async function processEventsNft({events, currentBlockNumber, chainName}) {
       await putRedisItem(tokenId, token, redisPrefixes.mainnetsidechainNft);
     }
   }
-  
+
   await putRedisItem(ids.lastCachedBlockNft, {
     id: ids.lastCachedBlockNft,
     number: currentBlockNumber,
@@ -317,7 +331,7 @@ async function processEventAccount({contract, event, chainName}) {
         address: owner,
         chainName,
       });
-      
+
       // console.log('load account into cache', owner, account);
 
       // if (token.properties.hash) {
@@ -356,7 +370,7 @@ async function processEventsAccount({contract, events, currentBlockNumber, chain
     });
     await putRedisItem(owner, account, redisPrefixes.mainnetsidechainAccount);
   }
-  
+
   await putRedisItem(ids.lastCachedBlockAccount, {number: currentBlockNumber}, redisPrefixes.mainnetsidechainAccount);
 }
 

@@ -194,19 +194,18 @@ async function getEventsRated({
   chainName,
   contractName,
   eventName = 'allEvents',
+  fromBlock = 0,
   rate = 100000,
   sleep = 0,
 }) {
   // Get latest block number.
-  const {web3s} = await getBlockchain();
-
-  const web3 = web3s[chainName];
-  const latestBlock = await new web3.eth.getBlockNumber();
+  const {web3} = await getBlockchain();
+  const latestBlock = await new web3[chainName].eth.getBlockNumber();
 
   // Loop through past events at the provided rate.
   const events = [];
-  let block = 0;
-  let newBlock = 0;
+  let block = fromBlock;
+  let newBlock = fromBlock;
 
   while (block < latestBlock) {
     // Cap new block at latest block.
