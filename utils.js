@@ -26,8 +26,8 @@ const makePromise = () => {
   return p;
 };
 
-function timeout(ms, result = true) {
-  return new Promise(resolve => setTimeout(resolve.bind(null, result), ms));
+function timeout(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 module.exports = {
