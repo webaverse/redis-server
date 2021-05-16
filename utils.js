@@ -25,9 +25,15 @@ const makePromise = () => {
   p.reject = reject;
   return p;
 };
+
+function timeout(ms, result = true) {
+  return new Promise(resolve => setTimeout(resolve.bind(null, result), ms));
+}
+
 module.exports = {
   jsonParse,
   _setCorsHeaders,
   getExt,
   makePromise,
+  timeout,
 }
