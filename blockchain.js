@@ -5,6 +5,7 @@ const https = require('https');
 const fetch = require('node-fetch');
 const Web3 = require('web3');
 const {polygonVigilKey, ethereumHost} = require('./constants.js');
+const {timeout} = require('./utils.js');
 
 let config = require('fs').existsSync('./config.json') ? require('./config.json') : null;
 
@@ -73,9 +74,9 @@ const loadPromise = (async() => {
   ]);
   addresses = newAddresses;
   abis = newAbis;
-  
+
   // console.log('ports', {ethereumHostAddress, newPorts});
-  
+
   const ports = newPorts;
   gethNodeUrl = `http://${ethereumHostAddress}`;
   gethNodeWSUrl = `ws://${ethereumHostAddress}`;
@@ -94,7 +95,7 @@ const loadPromise = (async() => {
     testnetsidechain: new Web3(new Web3.providers.HttpProvider(
       `${gethNodeUrl}:${ports.testnetsidechain}`
     )), */
-    
+
     polygon: new Web3(new Web3.providers.HttpProvider(
       `https://rpc-mainnet.maticvigil.com/v1/${polygonVigilKey}`
     )),
@@ -102,20 +103,20 @@ const loadPromise = (async() => {
       `https://rpc-mumbai.maticvigil.com/v1/${polygonVigilKey}`
     )), */
   };
-  
+
   // console.log('polygon provider', `wss://rpc-webaverse-mainnet.maticvigil.com/ws/v1/${polygonVigilKey}`);
-  
+
   web3socketProviderUrls = {
     mainnet: `wss://mainnet.infura.io/ws/v3/${infuraProjectId}`,
     mainnetsidechain: `${gethNodeWSUrl}:${ports.mainnetsidechainWs}`,
 
     // testnet: `wss://rinkeby.infura.io/ws/v3/${infuraProjectId}`,
     // testnetsidechain: `${gethNodeWSUrl}:${ports.testnetsidechainWs}`,
-    
+
     polygon: `wss://rpc-webverse-mainnet.maticvigil.com/ws/v1/${polygonVigilKey}`,
     // testnetpolygon: `wss://rpc-mumbai.maticvigil.com/ws/v1/${polygonVigilKey}`,
   };
-  
+
   /* web3socketProviders = {};
   for (const k in web3socketProviderUrls) {
     web3socketProviders[k] = new Web3.providers.WebsocketProvider(web3socketProviderUrls[k]);
@@ -137,7 +138,7 @@ const loadPromise = (async() => {
   for (const k in web3socketProviders) {
     web3sockets[k] = _makeWeb3Socket(k);
   } */
-  
+
   contracts = {};
   BlockchainNetworks.forEach(network => {
     contracts[network] = {
@@ -151,7 +152,7 @@ const loadPromise = (async() => {
       LANDProxy: new web3[network].eth.Contract(abis.LANDProxy, addresses[network].LANDProxy),
     }
   })
-  
+
   /* wsContracts = {};
   BlockchainNetworks.forEach(network => {
     wsContracts[network] = {
@@ -170,10 +171,12 @@ const loadPromise = (async() => {
 async function getPastEvents({
   chainName,
   contractName,
-  eventName = 'allEvents',
+  eventName,
   fromBlock = 0,
   toBlock = 'latest',
 } = {}) {
+  if (!eventName) throw new Error('Missing event name.')
+
   try {
     const {contracts} = await getBlockchain();
     return await contracts[chainName][contractName].getPastEvents(
@@ -187,6 +190,46 @@ async function getPastEvents({
     console.error(e);
     return [];
   }
+}
+
+async function getEventsRated({
+  chainName,
+  contractName,
+  eventName,
+  fromBlock = 0,
+  rate = 100000,
+  sleep = 0,
+}) {
+  if (!eventName) throw new Error('Missing event name.')
+
+  // Get latest block number.
+  const {web3} = await getBlockchain();
+  const latestBlock = await new web3[chainName].eth.getBlockNumber();
+
+  // Loop through past events at the provided rate.
+  const events = [];
+  let block = fromBlock;
+  let newBlock = fromBlock;
+
+  while (block < latestBlock) {
+    // Cap new block at latest block.
+    newBlock = Math.min(latestBlock, block + rate);
+
+    // if (!network)
+
+    events.push(...(await getPastEvents({
+      chainName,
+      contractName,
+      eventName,
+      fromBlock: block,
+      toBlock: newBlock,
+    })));
+
+    block = newBlock;
+    await timeout(sleep);
+  }
+
+  return events;
 }
 
 async function getBlockchain() {
@@ -216,7 +259,7 @@ function makeWeb3WebsocketContract(chainName, contractName) {
   web3socketProvider.on('end', () => {
     listener.emit('end');
   });
-  
+
   const listener = new EventEmitter();
   listener.disconnect = () => {
     try {
@@ -232,6 +275,7 @@ function makeWeb3WebsocketContract(chainName, contractName) {
 
 module.exports = {
   getBlockchain,
+  getEventsRated,
   getPastEvents,
   makeWeb3WebsocketContract,
 };

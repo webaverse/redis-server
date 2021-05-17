@@ -1,5 +1,5 @@
 const {accountKeys, storageHost, appPreviewHost} = require('./constants.js');
-const {getBlockchain, getPastEvents} = require('./blockchain.js');
+const {getBlockchain, getEventsRated, getPastEvents} = require('./blockchain.js');
 
 const zeroAddress = '0x0000000000000000000000000000000000000000';
 const rawSupportedTypes = [
@@ -145,7 +145,7 @@ const _cancelEntry = (deposits, withdraws, currentLocation, nextLocation, curren
     ];
   } else {
     // console.log('sliced 3');
-    
+
     return null;
   }
 };
@@ -160,7 +160,7 @@ const _cancelEntries = (
 ) => {
   let currentLocation = 'mainnetsidechain';
   let transactionHash = '';
-  
+
   console.log('cancel entries', JSON.stringify({
     mainnetDepositedEntries,
     mainnetWithdrewEntries,
@@ -169,15 +169,15 @@ const _cancelEntries = (
     polygonDepositedEntries,
     polygonWithdrewEntries,
   }, null, 2));
-  
+
   // swap transfers
   {
     let changed = true;
     while (changed) {
       changed = false;
-      
+
       console.log('loop start');
-      
+
       // sidechain -> mainnet
       {
         const result = _cancelEntry(sidechainDepositedEntries, mainnetWithdrewEntries, currentLocation, 'mainnet', currentAddress, transactionHash);
@@ -188,7 +188,7 @@ const _cancelEntries = (
           currentAddress = result[3];
           // transactionHash = result[4];
           changed = true;
-        
+
           console.log('sidechain -> mainnet', !/stuck/.test(result[2]), currentLocation, currentAddress, transactionHash, JSON.stringify({
             mainnetDepositedEntries: mainnetDepositedEntries.length,
             mainnetWithdrewEntries: mainnetWithdrewEntries.length,
@@ -197,7 +197,7 @@ const _cancelEntries = (
             polygonDepositedEntries: polygonDepositedEntries.length,
             polygonWithdrewEntries: polygonWithdrewEntries.length,
           }));
-        
+
           {
             const result2 = _cancelEntry(mainnetDepositedEntries, sidechainWithdrewEntries, currentLocation, 'mainnetsidechain', currentAddress, transactionHash);
             if (result2 && !/stuck/.test(result2[2])) {
@@ -207,7 +207,7 @@ const _cancelEntries = (
               currentAddress = result2[3];
               // transactionHash = result2[4];
               changed = true;
-              
+
               console.log('mainnet -> sidechain', !/stuck/.test(result[2]), currentLocation, currentAddress, transactionHash, JSON.stringify({
                 mainnetDepositedEntries: mainnetDepositedEntries.length,
                 mainnetWithdrewEntries: mainnetWithdrewEntries.length,
@@ -238,7 +238,7 @@ const _cancelEntries = (
           }));
         }
       }
-      
+
       // sidechain -> polygon
       {
         const result = _cancelEntry(sidechainDepositedEntries, polygonWithdrewEntries, currentLocation, 'polygon', currentAddress, transactionHash);
@@ -249,7 +249,7 @@ const _cancelEntries = (
           currentAddress = result[3];
           // transactionHash = result[4];
           changed = true;
-        
+
           console.log('sidechain -> polygon', !/stuck/.test(result[2]), currentLocation, currentAddress, transactionHash, JSON.stringify({
             mainnetDepositedEntries: mainnetDepositedEntries.length,
             mainnetWithdrewEntries: mainnetWithdrewEntries.length,
@@ -258,7 +258,7 @@ const _cancelEntries = (
             polygonDepositedEntries: polygonDepositedEntries.length,
             polygonWithdrewEntries: polygonWithdrewEntries.length,
           }));
-        
+
           const result2 = _cancelEntry(polygonDepositedEntries, sidechainWithdrewEntries, currentLocation, 'mainnetsidechain', currentAddress, transactionHash);
           if (result2 && !/stuck/.test(result2[2])) {
             polygonDepositedEntries = result2[0];
@@ -267,7 +267,7 @@ const _cancelEntries = (
             currentAddress = result2[3];
             // transactionHash = result2[4];
             changed = true;
-            
+
             console.log('polygon -> sidechain', !/stuck/.test(result[2]), currentLocation, currentAddress, transactionHash, JSON.stringify({
               mainnetDepositedEntries: mainnetDepositedEntries.length,
               mainnetWithdrewEntries: mainnetWithdrewEntries.length,
@@ -305,7 +305,7 @@ const _cancelEntries = (
     let changed = true;
     while (changed) {
       changed = false;
-      
+
       // sidechain -> sidechain
       {
         const result = _cancelEntry(sidechainDepositedEntries, sidechainWithdrewEntries, currentLocation, 'mainnetsidechain', currentAddress, transactionHash);
@@ -316,7 +316,7 @@ const _cancelEntries = (
           // currentAddress = result[3];
           // transactionHash = result[4];
           changed = true;
-          
+
           console.log('sidechain -> sidechain', !/stuck/.test(result[2]), currentLocation, currentAddress, transactionHash, JSON.stringify({
             mainnetDepositedEntries: mainnetDepositedEntries.length,
             mainnetWithdrewEntries: mainnetWithdrewEntries.length,
@@ -346,7 +346,7 @@ const _cancelEntries = (
           // currentAddress = result[3];
           // transactionHash = result[4];
           changed = true;
-          
+
           console.log('mainnet -> mainnet', !/stuck/.test(result[2]), currentLocation, currentAddress, transactionHash, JSON.stringify({
             mainnetDepositedEntries: mainnetDepositedEntries.length,
             mainnetWithdrewEntries: mainnetWithdrewEntries.length,
@@ -376,7 +376,7 @@ const _cancelEntries = (
           // currentAddress = result[3];
           // transactionHash = result[4];
           changed = true;
-          
+
           console.log('polygon -> polygon', !/stuck/.test(result[2]), currentLocation, currentAddress, transactionHash, JSON.stringify({
             mainnetDepositedEntries: mainnetDepositedEntries.length,
             mainnetWithdrewEntries: mainnetWithdrewEntries.length,
@@ -425,7 +425,7 @@ const _cancelEntries = (
 
 const formatToken = contractName => chainName => async (token, storeEntries, mainnetDepositedEntries, mainnetWithdrewEntries, sidechainDepositedEntries, sidechainWithdrewEntries, polygonDepositedEntries, polygonWithdrewEntries) => {
   // console.log('format token', {id: token.id});
-  
+
   const tokenId = parseInt(token.id, 10);
   const {name, ext, unlockable, encrypted, hash} = token;
 
@@ -450,7 +450,7 @@ const formatToken = contractName => chainName => async (token, storeEntries, mai
     _log('formatToken 3' + JSON.stringify({id: token.id}), contracts[sidechainChainName].NFT.methods.getMetadata(token.hash, 'description').call()),
     contracts[sidechainChainName].NFT.methods.getMinter(tokenId).call(),
   ]);
-  
+
   // console.log('got all contract sources', {id: token.id});
 
   /* console.log('got entries 1', {
@@ -469,7 +469,7 @@ const formatToken = contractName => chainName => async (token, storeEntries, mai
   sidechainWithdrewEntries = sidechainWithdrewEntries.filter(_filterByTokenIdLocal);
   polygonDepositedEntries = polygonDepositedEntries.filter(_filterByTokenIdLocal);
   polygonWithdrewEntries = polygonWithdrewEntries.filter(_filterByTokenIdLocal);
-  
+
   // console.log('filter by token id', tokenId, JSON.stringify({sidechainDepositedEntries}, null, 2));
 
   const result = _cancelEntries(
@@ -499,7 +499,7 @@ const formatToken = contractName => chainName => async (token, storeEntries, mai
     polygonDepositedEntries,
     polygonWithdrewEntries,
   }); */
-  
+
   // console.log('mainnet withdrew entries', sidechainDepositedEntries);
 
   /* const isStuckForward = sidechainDepositedEntries.length > 0;
@@ -645,7 +645,7 @@ const getChainNft = contractName => chainName => async (tokenId, storeEntries, m
     });
     throw new Error('invalid arguments');
   }
-  
+
   chainName = 'mainnetsidechain'; // XXX hack; get rid of this argument
 
   const {
@@ -697,9 +697,9 @@ const getChainNft = contractName => chainName => async (tokenId, storeEntries, m
       }
     })(), */
   ]);
-  
+
   // console.log('get chain nft 2', tokenId, token, contractName);
-  
+
   try {
     if (_isValidToken(token)) {
       if (contractName === 'NFT') {
@@ -753,7 +753,7 @@ const getChainOwnerNft = contractName => chainName => async (address, i, storeEn
     });
     throw new Error('invalid arguments');
   }
-  
+
   const tokenSrc = await contracts[chainName][contractName].methods.tokenOfOwnerByIndexFull(address, i).call();
   const token = _copy(tokenSrc);
   const {hash} = token;
@@ -799,7 +799,7 @@ async function getChainAccount({
 } = {}) {
   const {contracts} = await getBlockchain();
   const contract = contracts[chainName];
-  
+
   const account = {
     address,
   };
@@ -809,7 +809,7 @@ async function getChainAccount({
     // console.log('get value', accountKey, accountValue);
     account[accountKey] = accountValue;
   }));
-  
+
   return account;
 }
 
@@ -817,7 +817,7 @@ const getStoreEntries = async chainName => {
   const {
     contracts,
   } = await getBlockchain();
-  
+
   const numStores = await contracts[chainName].Trade.methods.numStores().call();
 
   const promises = Array(numStores);
@@ -867,13 +867,18 @@ const getAllWithdrawsDeposits = contractName => async chainName => {
     polygonChainName,
   } = getChainNames(chainName);
 
+  // Polygon getPastEvent calls must be rated.
+  const getEventsHandler = chainName = 'polygon'
+    ? getPastEvents
+    : getEventsRated
+
   /* const mainnetContract = contracts[mainnetChainName];
   const mainnetProxyContract = mainnetContract[contractName + 'Proxy'];
   const sidechainContract = contracts[sidechainChainName];
   const sidechainProxyContract = sidechainContract[contractName + 'Proxy'];
   const polygonContract = contracts[polygonChainName];
   const polygonProxyContract = polygonContract[contractName + 'Proxy']; */
-  
+
   const [
     mainnetDepositedEntries,
     mainnetWithdrewEntries,
@@ -882,42 +887,42 @@ const getAllWithdrawsDeposits = contractName => async chainName => {
     polygonDepositedEntries,
     polygonWithdrewEntries,
   ] = await Promise.all([
-    _log('getAllWithdrawsDeposits 1', getPastEvents({
+    _log('getAllWithdrawsDeposits 1', getEventsHandler({
       chainName: mainnetChainName,
       contractName: contractName + 'Proxy',
       eventName: 'Deposited',
       fromBlock: 0,
       toBlock: 'latest',
     })),
-    _log('getAllWithdrawsDeposits 2', getPastEvents({
+    _log('getAllWithdrawsDeposits 2', getEventsHandler({
       chainName: mainnetChainName,
       contractName: contractName + 'Proxy',
       eventName: 'Withdrew',
       fromBlock: 0,
       toBlock: 'latest',
     })),
-    _log('getAllWithdrawsDeposits 3', getPastEvents({
+    _log('getAllWithdrawsDeposits 3', getEventsHandler({
       chainName: sidechainChainName,
       contractName: contractName + 'Proxy',
       eventName: 'Deposited',
       fromBlock: 0,
       toBlock: 'latest',
     })),
-    _log('getAllWithdrawsDeposits 4', getPastEvents({
+    _log('getAllWithdrawsDeposits 4', getEventsHandler({
       chainName: sidechainChainName,
       contractName: contractName + 'Proxy',
       eventName: 'Withdrew',
       fromBlock: 0,
       toBlock: 'latest',
     })),
-    _log('getAllWithdrawsDeposits 5', getPastEvents({
+    _log('getAllWithdrawsDeposits 5', getEventsHandler({
       chainName: polygonChainName,
       contractName: contractName + 'Proxy',
       eventName: 'Deposited',
       fromBlock: 0,
       toBlock: 'latest',
     })),
-    _log('getAllWithdrawsDeposits 6', getPastEvents({
+    _log('getAllWithdrawsDeposits 6', getEventsHandler({
       chainName: polygonChainName,
       contractName: contractName + 'Proxy',
       eventName: 'Withdrew',
