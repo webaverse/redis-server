@@ -171,10 +171,12 @@ const loadPromise = (async() => {
 async function getPastEvents({
   chainName,
   contractName,
-  eventName = 'allEvents',
+  eventName,
   fromBlock = 0,
   toBlock = 'latest',
 } = {}) {
+  if (!eventName) throw new Error('Missing event name.')
+
   try {
     const {contracts} = await getBlockchain();
     return await contracts[chainName][contractName].getPastEvents(
@@ -193,11 +195,13 @@ async function getPastEvents({
 async function getEventsRated({
   chainName,
   contractName,
-  eventName = 'allEvents',
+  eventName,
   fromBlock = 0,
   rate = 100000,
   sleep = 0,
 }) {
+  if (!eventName) throw new Error('Missing event name.')
+
   // Get latest block number.
   const {web3} = await getBlockchain();
   const latestBlock = await new web3[chainName].eth.getBlockNumber();

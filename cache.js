@@ -61,11 +61,13 @@ async function initNftCache({chainName}) {
       ? await getEventsRated({
         chainName,
         contractName: 'NFT',
+        eventName: 'allEvents',
         fromBlock: lastBlockNumber,
       })
       : await getPastEvents({
         chainName,
         contractName: 'NFT',
+        eventName: 'allEvents',
         fromBlock: lastBlockNumber,
       });
 
@@ -136,11 +138,13 @@ async function initAccountCache({chainName}) {
       ? await getEventsRated({
         chainName,
         contractName: 'Account',
+        eventName: 'allEvents',
         fromBlock: lastBlockNumber,
       })
       : await getPastEvents({
         chainName,
         contractName: 'Account',
+        eventName: 'allEvents',
         fromBlock: lastBlockNumber,
       });
 
