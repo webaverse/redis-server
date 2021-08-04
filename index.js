@@ -83,7 +83,7 @@ const appStatic = express.static(__dirname);
 app.use(appStatic);
 app.get('*', async (req, res, next) => {
   const o = url.parse(req.protocol + '://' + (req.headers['host'] || '') + req.url);
-  // do not use this API in production or you will be fired
+  // do not use this API in production
   if (o.hostname === 'stuck-debug.webaverse.com') {
     const {pathname} = o;
     const match = pathname.match(/^\/([^\/]+)\/([^\/]+)$/);
