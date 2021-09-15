@@ -656,7 +656,7 @@ const getChainNft = contractName => chainName => async (tokenId, storeEntries, m
 
   const [
     token,
-    mainnetToken,
+    // mainnetToken,
     // polygonToken,
   ] = await Promise.all([
     (async () => {
@@ -680,7 +680,7 @@ const getChainNft = contractName => chainName => async (tokenId, storeEntries, m
       token.encrypted = encrypted;
       return token;
     })(),
-    (async () => {
+    /* (async () => {
       if (isSidechain && isAll) {
         const mainnetToken = await contracts[isTestnet ? 'testnet' : 'mainnet'][contractName].methods.tokenByIdFull(tokenId).call();
         return mainnetToken;
@@ -688,7 +688,7 @@ const getChainNft = contractName => chainName => async (tokenId, storeEntries, m
         return null;
       }
     })(),
-    /* (async () => {
+    (async () => {
       if (isSidechain && isAll) {
         const polygonToken = await contracts[chainName][contractName].methods.tokenByIdFull(tokenId).call(isTestnet ? 'testnetpolygon' : 'polygon');
         return polygonToken;
