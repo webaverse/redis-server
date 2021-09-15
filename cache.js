@@ -171,7 +171,7 @@ async function initCaches() {
   await Promise.all([
     'mainnet',
     'mainnetsidechain',
-    'polygon',
+    // 'polygon',
   ].map(chainName => {
     return Promise.all([
       _logCache(chainName + ' NFT', initNftCache({chainName})),
@@ -191,8 +191,8 @@ async function processEventNft({event, chainName}) {
         mainnetWithdrewEntries,
         sidechainDepositedEntries,
         sidechainWithdrewEntries,
-        polygonDepositedEntries,
-        polygonWithdrewEntries,
+        // polygonDepositedEntries,
+        // polygonWithdrewEntries,
       } = await getAllWithdrawsDeposits('NFT')(chainName);
 
       const token = await getChainNft('NFT')(chainName)(
@@ -202,8 +202,8 @@ async function processEventNft({event, chainName}) {
         mainnetWithdrewEntries,
         sidechainDepositedEntries,
         sidechainWithdrewEntries,
-        polygonDepositedEntries,
-        polygonWithdrewEntries,
+        // polygonDepositedEntries,
+        // polygonWithdrewEntries,
       );
 
       if (token.owner.address !== '0x0000000000000000000000000000000000000000') {
@@ -298,8 +298,8 @@ async function processEventsNft({events, currentBlockNumber, chainName}) {
     mainnetWithdrewEntries,
     sidechainDepositedEntries,
     sidechainWithdrewEntries,
-    polygonDepositedEntries,
-    polygonWithdrewEntries,
+    // polygonDepositedEntries,
+    // polygonWithdrewEntries,
   } = await getAllWithdrawsDeposits('NFT')(chainName);
   for (const tokenId of tokenIds) {
     const token = await getChainNft('NFT')(chainName)(
@@ -309,8 +309,8 @@ async function processEventsNft({events, currentBlockNumber, chainName}) {
       mainnetWithdrewEntries,
       sidechainDepositedEntries,
       sidechainWithdrewEntries,
-      polygonDepositedEntries,
-      polygonWithdrewEntries,
+      // polygonDepositedEntries,
+      // polygonWithdrewEntries,
     );
 
     if (token.owner.address !== '0x0000000000000000000000000000000000000000') {
