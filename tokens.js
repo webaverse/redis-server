@@ -477,8 +477,8 @@ const formatToken = contractName => chainName => async (token, storeEntries, mai
     mainnetWithdrewEntries,
     sidechainDepositedEntries,
     sidechainWithdrewEntries,
-    // polygonDepositedEntries,
-    // polygonWithdrewEntries,
+    polygonDepositedEntries,
+    polygonWithdrewEntries,
     sidechainMinterAddress,
   );
   mainnetDepositedEntries = result[0];
