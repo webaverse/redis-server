@@ -1,4 +1,28 @@
-node_modules
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependency directories
+node_modules/
+
+# secret mnemonic file
+.secret
+
+# Optional npm cache directory
+.npm
+
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+.env
+*.zip
+dist
 config.json
 redis.conf
 dump.rdb
