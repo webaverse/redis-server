@@ -6,7 +6,8 @@ const fetch = require('node-fetch');
 const Web3 = require('web3');
 const {polygonVigilKey, ethereumHost} = require('./constants.js');
 const {timeout} = require('./utils.js');
-
+const tmpConfig = require("./config")["networks"]["rinkeby"];
+const WebaverseERC721ABI = require("./artifacts/WebaverseERC721.json").abi;
 let config = require('fs').existsSync('./config.json') ? require('./config.json') : null;
 
 const infuraProjectId = process.env.infuraProjectId || config.infuraProjectId;
@@ -88,7 +89,9 @@ const loadPromise = (async() => {
     mainnetsidechain: new Web3(new Web3.providers.HttpProvider(
       `${gethNodeUrl}:${ports.mainnetsidechain}`
     )),
-
+    rinkeby: new Web3(new Web3.providers.HttpProvider(
+      `https://rinkeby.infura.io/v3/${tmpConfig.infuraProjectId}`
+    )),
     /* testnet: new Web3(new Web3.providers.HttpProvider(
       `https://rinkeby.infura.io/v3/${infuraProjectId}`
     )),
@@ -152,7 +155,12 @@ const loadPromise = (async() => {
       LANDProxy: new web3[network].eth.Contract(abis.LANDProxy, addresses[network].LANDProxy),
     }
   })
-
+  contracts["rinkeby"] = {
+    WebaverseERC721: new web3["rinkeby"].eth.Contract(
+      WebaverseERC721ABI,
+      tmpConfig.contractAddress
+    ),
+  };
   /* wsContracts = {};
   BlockchainNetworks.forEach(network => {
     wsContracts[network] = {

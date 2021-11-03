@@ -46,6 +46,7 @@ const tableNames = {
   polygonNft: 'polygon-cache-nft',
   testnetpolygonAccount: 'testnetpolygon-cache-account',
   testnetpolygonNft: 'testnetpolygon-cache-nft',
+  WebaverseERC721: "WebaverseERC721-cache-tokenids",
 };
 const redisPrefixes = (() => {
   const result = {};

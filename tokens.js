@@ -854,6 +854,8 @@ const getChainNames = chainName => {
   }
   const sidechainChainName = mainnetChainName + 'sidechain';
   const polygonChainName = mainnetChainName.replace(/mainnet/, '') + 'polygon';
+  const testnet = "rinkeby";
+
   return {
     mainnetChainName,
     sidechainChainName,
@@ -949,10 +951,40 @@ const getAllWithdrawsDeposits = contractName => async chainName => {
   };
 };
 
+const getTokenIDs = (contractName) => async (chainName) => {
+    // const { mainnetChainName, sidechainChainName, polygonChainName } = getChainNames(chainName);
+
+    // Polygon getPastEvent calls must be rated.
+    // const getEventsHandler = (chainName = "polygon" ? getPastEvents : getEventsRated);
+
+    const getEventsHandler = getPastEvents;
+    const tokenIdPromiseUnresolved = await Promise.all([
+      _log(
+        "getAllTokenIds",
+        getEventsHandler({
+          chainName: chainName,
+          contractName: contractName, //contractName + "Proxy",
+          eventName: "Transfer",
+          fromBlock: 0,
+          toBlock: "latest",
+        })
+      ),
+    ]);
+    const tokenIdPromise = Promise.resolve(tokenIdPromiseUnresolved);
+    let tokenIdOwners = {};
+    tokenIdPromise.then((data) => {
+      data[0].forEach((event) => {
+          tokenIdOwners[event.returnValues.tokenId] = event.returnValues.to;
+      });
+    });
+    return tokenIdOwners;
+};
+
 module.exports = {
   getChainNft,
   getChainAccount,
   getChainToken,
+  getTokenIDs,
   // formatToken,
   // formatLand,
   getStoreEntries,
