@@ -467,8 +467,8 @@ const formatToken = contractName => chainName => async (token, storeEntries, mai
   mainnetWithdrewEntries = mainnetWithdrewEntries.filter(_filterByTokenIdLocal);
   sidechainDepositedEntries = sidechainDepositedEntries.filter(_filterByTokenIdLocal);
   sidechainWithdrewEntries = sidechainWithdrewEntries.filter(_filterByTokenIdLocal);
-  polygonDepositedEntries = polygonDepositedEntries.filter(_filterByTokenIdLocal);
-  polygonWithdrewEntries = polygonWithdrewEntries.filter(_filterByTokenIdLocal);
+  // polygonDepositedEntries = polygonDepositedEntries.filter(_filterByTokenIdLocal);
+  // polygonWithdrewEntries = polygonWithdrewEntries.filter(_filterByTokenIdLocal);
 
   // console.log('filter by token id', tokenId, JSON.stringify({sidechainDepositedEntries}, null, 2));
 
@@ -485,8 +485,8 @@ const formatToken = contractName => chainName => async (token, storeEntries, mai
   mainnetWithdrewEntries = result[1];
   sidechainWithdrewEntries = result[2];
   sidechainWithdrewEntries = result[3];
-  polygonDepositedEntries = result[4];
-  polygonWithdrewEntries = result[5];
+  // polygonDepositedEntries = result[4];
+  // polygonWithdrewEntries = result[5];
   const currentLocation = result[6];
   sidechainMinterAddress = result[7];
   const stuckTransactionHash = result[8];
@@ -571,7 +571,7 @@ const formatLand = contractName => chainName => async (token, storeEntries) => {
   const {
     mainnetChainName,
     sidechainChainName,
-    polygonChainName,
+    // polygonChainName,
   } = getChainNames(chainName);
 
   const owner = await _fetchAccount(token.owner, sidechainChainName);
@@ -656,8 +656,8 @@ const getChainNft = contractName => chainName => async (tokenId, storeEntries, m
 
   const [
     token,
-    /* mainnetToken,
-    polygonToken, */
+    // mainnetToken,
+    // polygonToken,
   ] = await Promise.all([
     (async () => {
       const tokenSrc = await contracts[chainName][contractName].methods.tokenByIdFull(tokenId).call();
@@ -859,14 +859,14 @@ const getChainNames = chainName => {
   return {
     mainnetChainName,
     sidechainChainName,
-    polygonChainName,
+    // polygonChainName,
   };
 };
 const getAllWithdrawsDeposits = contractName => async chainName => {
   const {
     mainnetChainName,
     sidechainChainName,
-    polygonChainName,
+    // polygonChainName,
   } = getChainNames(chainName);
 
   // Polygon getPastEvent calls must be rated.
@@ -917,7 +917,9 @@ const getAllWithdrawsDeposits = contractName => async chainName => {
       fromBlock: 0,
       toBlock: 'latest',
     })),
-    _log('getAllWithdrawsDeposits 5', getEventsHandler({
+    Promise.all([]),
+    Promise.all([]),
+    /* _log('getAllWithdrawsDeposits 5', getEventsHandler({
       chainName: polygonChainName,
       contractName: contractName + 'Proxy',
       eventName: 'Deposited',
@@ -930,7 +932,7 @@ const getAllWithdrawsDeposits = contractName => async chainName => {
       eventName: 'Withdrew',
       fromBlock: 0,
       toBlock: 'latest',
-    })),
+    })), */
   ]);
   /* console.log('latched', {
     chainName,
