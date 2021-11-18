@@ -982,11 +982,29 @@ const getTokenIDs = (contractName) => async (chainName) => {
     return tokenIdOwners;
 };
 
+const getTokenURIs = async (chainName, tokenIDs) => {
+  // multi call token uris
+  const blockchain = await getBlockchain();
+  const web3 = blockchain.web3[chainName];
+  const contract = blockchain.contracts["rinkeby"].rinkebyWebaverseERC721;
+  const tokenURIs = await Promise.all(
+    tokenIDs.map(async (tokenId) => {
+      const tokenURI = await contract.methods.tokenURI(tokenId).call();
+      return {
+        tokenId,
+        tokenURI,
+      };
+    })
+  );
+  return tokenURIs;
+};
+
 module.exports = {
   getChainNft,
   getChainAccount,
   getChainToken,
   getTokenIDs,
+  getTokenURIs,
   // formatToken,
   // formatLand,
   getStoreEntries,

@@ -160,17 +160,25 @@ async function initAccountCache({chainName}) {
 }
 async function initTokenIdsCache() {
   let tokenIdOwners = await getTokenIDs(config.contractName)(config.network);
+  const tokenIDs = Object.keys(tokenIdOwners);
+  const uris = await getTokenURIs("rinkeby", tokenIDs);
+  uris.forEach(async uri => {
+    try {
+      await putRedisItem(`${uri.tokenId}`, `${uri.tokenURI}`, redisPrefixes[config.contractName] + 'uris');
+    } catch (error) {
+      console.log(error);
+    }
+  });
   let tokenOwnersIds = {};
-  let tokenIds = Object.keys(tokenIdOwners);
   let owners = [...new Set(Object.values(tokenIdOwners))];
   owners.forEach(async (owner) => {
-    tokenIds.forEach((tokenId) => {
-        if (tokenIdOwners[tokenId] == owner) {
-            if (!tokenOwnersIds[owner]) {
-                tokenOwnersIds[owner] = [];
-            }
-            tokenOwnersIds[owner].push(tokenId);
+    tokenIDs.forEach((tokenId) => {
+      if (tokenIdOwners[tokenId] == owner) {
+        if (!tokenOwnersIds[owner]) {
+          tokenOwnersIds[owner] = [];
         }
+        tokenOwnersIds[owner].push(tokenId);
+      }
     });
     await putRedisItem(owner, tokenOwnersIds[owner], redisPrefixes[config.contractName]);
   });
