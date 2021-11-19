@@ -1,5 +1,5 @@
 const {getRedisItem, putRedisItem} = require('./redis.js');
-const {getChainNft, getTokenIDs, getChainAccount, getAllWithdrawsDeposits} = require('./tokens.js');
+const {getChainNft, getTokenIDs, getTokenURIs, getChainAccount, getAllWithdrawsDeposits} = require('./tokens.js');
 const {nftKeys, nftPropertiesKeys, ids, redisPrefixes} = require('./constants.js');
 const {getBlockchain, getEventsRated, getPastEvents, makeWeb3WebsocketContract} = require('./blockchain.js');
 const {connect, getRedisAllItems} = require('./redis.js');
