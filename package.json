@@ -21,6 +21,7 @@
   "dependencies": {
     "express": "^4.17.1",
     "forever": "^3.0.4",
+    "is-ipfs": "^6.0.2",
     "node-fetch": "^2.6.1",
     "redis": "^3.1.1",
     "redis-redisearch": "^1.0.1",

@@ -180,7 +180,11 @@ async function initTokenIdsCache() {
         tokenOwnersIds[owner].push(tokenId);
       }
     });
-    await putRedisItem(owner, tokenOwnersIds[owner], redisPrefixes[config.contractName]);
+    try {
+      await putRedisItem(owner, tokenOwnersIds[owner], redisPrefixes[config.contractName]);
+    } catch (error) {
+      console.log(error);
+    }
   });
 }
 async function initCaches() {
