@@ -1,6 +1,5 @@
 const {accountKeys, storageHost, appPreviewHost} = require('./constants.js');
 const {getBlockchain, getEventsRated, getPastEvents} = require('./blockchain.js');
-const isIPFS = require('is-ipfs');
 
 const zeroAddress = '0x0000000000000000000000000000000000000000';
 const rawSupportedTypes = [
@@ -954,69 +953,10 @@ const getAllWithdrawsDeposits = contractName => async chainName => {
   };
 };
 
-const getTokenIDs = (contractName) => async (chainName) => {
-  // const { mainnetChainName, sidechainChainName, polygonChainName } = getChainNames(chainName);
-
-  // Polygon getPastEvent calls must be rated.
-  // const getEventsHandler = (chainName = "polygon" ? getPastEvents : getEventsRated);
-
-  const getEventsHandler = getPastEvents;
-  const tokenIdPromiseUnresolved = await Promise.all([
-    _log(
-      "getAllTokenIds",
-      getEventsHandler({
-        chainName: chainName,
-        contractName: contractName, //contractName + "Proxy",
-        eventName: "Transfer",
-        fromBlock: 0,
-        toBlock: "latest",
-      })
-    ),
-  ]);
-  const tokenIdPromise = Promise.resolve(tokenIdPromiseUnresolved);
-  let tokenIdOwners = {};
-  tokenIdPromise.then((data) => {
-    data[0].forEach((event) => {
-      tokenIdOwners[event.returnValues.tokenId] = event.returnValues.to;
-    });
-  });
-  return tokenIdOwners;
-};
-
-const getTokenURIs = async (chainName, tokenIDs) => {
-  // multi call token uris
-  const blockchain = await getBlockchain();
-  const web3 = blockchain.web3[chainName];
-  const contract = blockchain.contracts["rinkeby"].rinkebyWebaverseERC721;
-
-
-  tokenURIs = [];
-  for (let tokenId in tokenIDs) {
-    try {
-      const tokenURI = await contract.methods.tokenURI(tokenId).call();
-      // The URI can be anything, since public is allowed to mint tokens.
-      // We need to solve it but for now removing tokens with invalid IPFS uri
-      if (isIPFS.url(tokenURI)) {
-        tokenURIs.push({
-          tokenId,
-          tokenURI,
-        });
-      }
-    } catch (error) {
-      console.log('error');
-    }
-  }
-
-  console.log(tokenURIs);
-  return tokenURIs;
-};
-
 module.exports = {
   getChainNft,
   getChainAccount,
   getChainToken,
-  getTokenIDs,
-  getTokenURIs,
   // formatToken,
   // formatLand,
   getStoreEntries,

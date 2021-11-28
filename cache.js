@@ -1,9 +1,10 @@
 const {getRedisItem, putRedisItem} = require('./redis.js');
-const {getChainNft, getTokenIDs, getTokenURIs, getChainAccount, getAllWithdrawsDeposits} = require('./tokens.js');
+const {getChainNft, getChainAccount, getAllWithdrawsDeposits} = require('./tokens.js');
 const {nftKeys, nftPropertiesKeys, ids, redisPrefixes} = require('./constants.js');
 const {getBlockchain, getEventsRated, getPastEvents, makeWeb3WebsocketContract} = require('./blockchain.js');
 const {connect, getRedisAllItems} = require('./redis.js');
 const config = require("./config")["networks"]["rinkeby"];
+const cronJobs = require('./cron');
 
 async function initNftCache({chainName}) {
   const {
@@ -158,35 +159,7 @@ async function initAccountCache({chainName}) {
     }
   }
 }
-async function initTokenIdsCache() {
-  let tokenIdOwners = await getTokenIDs(config.contractName)(config.network);
-  const tokenIDs = Object.keys(tokenIdOwners);
-  const uris = await getTokenURIs("rinkeby", tokenIDs);
-  uris.forEach(async uri => {
-    try {
-      await putRedisItem(`${uri.tokenId}`, `${uri.tokenURI}`, redisPrefixes[config.contractName] + 'uris');
-    } catch (error) {
-      console.log(error);
-    }
-  });
-  let tokenOwnersIds = {};
-  let owners = [...new Set(Object.values(tokenIdOwners))];
-  owners.forEach(async (owner) => {
-    tokenIDs.forEach((tokenId) => {
-      if (tokenIdOwners[tokenId] == owner) {
-        if (!tokenOwnersIds[owner]) {
-          tokenOwnersIds[owner] = [];
-        }
-        tokenOwnersIds[owner].push(tokenId);
-      }
-    });
-    try {
-      await putRedisItem(owner, tokenOwnersIds[owner], redisPrefixes[config.contractName]);
-    } catch (error) {
-      console.log(error);
-    }
-  });
-}
+
 async function initCaches() {
   const _logCache = async (name, p) => {
     console.log('started init cache', name);
@@ -198,6 +171,7 @@ async function initCaches() {
     }
     console.log('finished init cache', name);
   };
+  cronJobs.init();
   await Promise.all([
     'mainnet',
     'mainnetsidechain',
@@ -206,7 +180,6 @@ async function initCaches() {
     return Promise.all([
       _logCache(chainName + ' NFT', initNftCache({chainName})),
       _logCache(chainName + ' Account', initAccountCache({chainName})),
-      _logCache("WebaverseERC721", initTokenIdsCache()),
     ]);
   }));
 }

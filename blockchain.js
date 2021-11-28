@@ -156,7 +156,7 @@ const loadPromise = (async() => {
     }
   })
   contracts["rinkeby"] = {
-    rinkebyWebaverseERC721: new web3["rinkeby"].eth.Contract(
+    webaverseERC721: new web3["rinkeby"].eth.Contract(
       WebaverseERC721ABI,
       tmpConfig.contractAddress
     ),
