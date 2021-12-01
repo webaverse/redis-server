@@ -25,7 +25,7 @@ const _log = async (text, p) => {
 function _jsonParse(s) {
   try {
     return JSON.parse(s);
-  } catch(err) {
+  } catch (err) {
     return null;
   }
 }
@@ -825,23 +825,23 @@ const getStoreEntries = async chainName => {
   for (let i = 0; i < numStores; i++) {
     promises[i] =
       contracts[chainName].Trade.methods.getStoreByIndex(i + 1)
-      .call()
-      .then(store => {
-        if (store.live) {
-          const id = parseInt(store.id, 10);
-          const seller = store.seller.toLowerCase();
-          const tokenId = parseInt(store.tokenId, 10);
-          const price = parseInt(store.price, 10);
-          return {
-            id,
-            seller,
-            tokenId,
-            price,
-          };
-        } else {
-          return null;
-        }
-      });
+        .call()
+        .then(store => {
+          if (store.live) {
+            const id = parseInt(store.id, 10);
+            const seller = store.seller.toLowerCase();
+            const tokenId = parseInt(store.tokenId, 10);
+            const price = parseInt(store.price, 10);
+            return {
+              id,
+              seller,
+              tokenId,
+              price,
+            };
+          } else {
+            return null;
+          }
+        });
   }
   let storeEntries = await Promise.all(promises);
   storeEntries = storeEntries.filter(store => store !== null);
@@ -953,40 +953,10 @@ const getAllWithdrawsDeposits = contractName => async chainName => {
   };
 };
 
-const getTokenIDs = (contractName) => async (chainName) => {
-    // const { mainnetChainName, sidechainChainName, polygonChainName } = getChainNames(chainName);
-
-    // Polygon getPastEvent calls must be rated.
-    // const getEventsHandler = (chainName = "polygon" ? getPastEvents : getEventsRated);
-
-    const getEventsHandler = getPastEvents;
-    const tokenIdPromiseUnresolved = await Promise.all([
-      _log(
-        "getAllTokenIds",
-        getEventsHandler({
-          chainName: chainName,
-          contractName: contractName, //contractName + "Proxy",
-          eventName: "Transfer",
-          fromBlock: 0,
-          toBlock: "latest",
-        })
-      ),
-    ]);
-    const tokenIdPromise = Promise.resolve(tokenIdPromiseUnresolved);
-    let tokenIdOwners = {};
-    tokenIdPromise.then((data) => {
-      data[0].forEach((event) => {
-          tokenIdOwners[event.returnValues.tokenId] = event.returnValues.to;
-      });
-    });
-    return tokenIdOwners;
-};
-
 module.exports = {
   getChainNft,
   getChainAccount,
   getChainToken,
-  getTokenIDs,
   // formatToken,
   // formatLand,
   getStoreEntries,
